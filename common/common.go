@@ -39,4 +39,3 @@ func DownloadFile(url, destinationDir string) (string, error) {
 
 	return name, nil
 }
-
