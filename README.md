@@ -29,10 +29,23 @@ You can download a binary release of `gvm` for your specific platform from the
 [releases](https://github.com/andrewkroh/gvm/releases) page. Then just put the
 binary in your `PATH` and mark it as executable (`chmod +x gvm`).
 
+You must adjust the version and platform info in URLs accordingly.
+
+For Bash users:
+
 ``` bash
-# Example for macOS (assume ~/bin is in PATH).
+# Example for macOS (assumes ~/bin is in PATH).
 curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.0.1/gvm-darwin-amd64
 chmod +x ~/bin/gvm
+gvm -h
+```
+
+For Windows PowerShell users:
+
+```
+Invoke-WebRequest -URI https://github.com/andrewkroh/gvm/releases/download/v0.0.1/gvm-
+windows-amd64.exe -Outfile C:\Windows\System32\gvm.exe
+gvm.exe -h
 ```
 
 For existing Go users:
