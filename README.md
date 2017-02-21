@@ -37,4 +37,4 @@ chmod +x ~/bin/gvm
 
 For existing Go users:
 
-`go get -u github.com/andrewkroh/gvm`
+`go get github.com/andrewkroh/gvm`
