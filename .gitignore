@@ -1,0 +1,7 @@
+*.exe
+*.iml
+.idea
+
+gvm
+glide.lock
+build/

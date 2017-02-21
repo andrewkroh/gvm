@@ -1,0 +1,29 @@
+sudo: false
+language: go
+go:
+- 1.7.5
+
+go_import_path: github.com/andrewkroh/gvm
+
+install:
+- go get github.com/mitchellh/gox
+
+script:
+- find . -name '*.go' | grep -v vendor | xargs gofmt -l | read && echo "Code differs from gofmt's style. Run 'gofmt -w .'" 1>&2 && exit 1 || true
+- go test $(go list ./... | grep -v /vendor/)
+- mkdir -p build/bin
+- gox -output="build/bin/{{.Dir}}-{{.OS}}-{{.Arch}}" -os='windows linux darwin' -arch='amd64 386' -osarch='!darwin/386'
+
+deploy:
+  provider: releases
+  api_key:
+    secure: MR1r0mXfHWN0ZBqnJtRFWPhvzJGBjWrgkO58EeUG8e4NGbr9GGS1eB5VA+aCpzYewUSn8vPsPGfGCnhZcxtOj/93oEczGL1uU6GKIc63FsVgmO2+2gTD1LjwLYOpmOqYTLaXJEU9nODr25zq2Qe8FUdmyzpoDffWqN5nf9A04Vhw4/hkhmYpgj3mD29c5YTL0by1rVSGmGRLryOnLDrJuxyjOG4fPNH1M+Z5uOH2TlHKwGAGxCAALVmq5GoXNYD/fEk7nUYjGaVSkNgmxYK+dicuSIUb1h5ewRmnBmS6dBChbSd2+S4lcQMpgglYPQ8wkygAkucd5EnB2Wm61XEMjire8NNQSOW6iOlN32BAG5wsC1koXS6Le3iw2lpV7Qdd+jGU553TLVl9J7tQbTERdiGurFiql6Dng5ZIsaFYkj9bTFqINpAaoYRGcfTxP9p55gr7teeMyFds6Ng63PWqCrqHXK5xxFuiXlNmfoM05wuB7ZHXl2kIJo+AU+vzSoToBLD4nGWtdU1O3+iex0ElXLLOydfHrTP4yT/FD9O2vjA/fWVJILiNV1zoTb9cIj2AOtLi/SqU5VRK34CnobhiSns0SRKm4EX3KCL4E582ac8mTe1hBsDYDogRBn/OJynQlsueeOnmDug7vjv8OAV1Be56zyvlU3BKaMjTqKEmEns=
+  file:
+    - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-darwin-amd64"
+    - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-linux-386"
+    - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-linux-amd64"
+    - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-windows-386.exe"
+    - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-windows-amd64.exe"
+  on:
+    tags: true
+    repo: andrewkroh/gvm
