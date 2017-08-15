@@ -7,8 +7,9 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/andrewkroh/gvm/common"
 	"github.com/pkg/errors"
+
+	"github.com/andrewkroh/gvm/common"
 )
 
 const (
@@ -36,7 +37,7 @@ func SetupGolang(version string) (string, error) {
 	}
 
 	if !isGoInstalled(goDir) {
-		tmp, err := ioutil.TempDir("", fmt.Sprintf("go%s.%s.%s", version, runtime.GOOS, runtime.GOARCH))
+		tmp, err := ioutil.TempDir("", filepath.Base(goDir))
 		if err != nil {
 			return "", err
 		}
@@ -47,18 +48,16 @@ func SetupGolang(version string) (string, error) {
 			return "", err
 		}
 
-		err = common.Extract(file, tmp)
-		if err != nil {
-			return "", err
-		}
-
-		if err := os.MkdirAll(filepath.Join(home, ".gvm", "versions"), 0755); err != nil {
+		if err := os.MkdirAll(goDir, 0755); err != nil {
 			if !os.IsExist(err) {
 				return "", err
 			}
 		}
 
-		if err := os.Rename(filepath.Join(tmp, "go"), goDir); err != nil {
+		err = common.Extract(file, goDir)
+		if err != nil {
+			// Remove on error because the extracted data could be corrupt.
+			os.RemoveAll(goDir)
 			return "", err
 		}
 	}
