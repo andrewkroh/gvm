@@ -7,8 +7,9 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/andrewkroh/gvm/common"
 	"github.com/pkg/errors"
+
+	"github.com/andrewkroh/gvm/common"
 )
 
 const (
@@ -36,7 +37,8 @@ func SetupGolang(version string) (string, error) {
 	}
 
 	if !isGoInstalled(goDir) {
-		tmp, err := ioutil.TempDir("", fmt.Sprintf("go%s.%s.%s", version, runtime.GOOS, runtime.GOARCH))
+		// Download the package to a temp dir.
+		tmp, err := ioutil.TempDir("", filepath.Base(goDir))
 		if err != nil {
 			return "", err
 		}
@@ -47,18 +49,28 @@ func SetupGolang(version string) (string, error) {
 			return "", err
 		}
 
-		err = common.Extract(file, tmp)
-		if err != nil {
-			return "", err
-		}
-
-		if err := os.MkdirAll(filepath.Join(home, ".gvm", "versions"), 0755); err != nil {
+		// Make the ~/.gvm/versions directory.
+		if err := os.MkdirAll(filepath.Dir(goDir), 0755); err != nil {
 			if !os.IsExist(err) {
 				return "", err
 			}
 		}
 
-		if err := os.Rename(filepath.Join(tmp, "go"), goDir); err != nil {
+		// Extract to a temp dir on the same volume as the destination to avoid
+		// potential EXDEV (invalid cross-device link) errors when renaming.
+		goDirTmp := goDir + ".tmp"
+		if err = os.Mkdir(goDirTmp, 0755); err != nil {
+			return "", err
+		}
+		defer os.RemoveAll(goDirTmp)
+
+		err = common.Extract(file, goDirTmp)
+		if err != nil {
+			return "", err
+		}
+
+		// Move into the final location.
+		if err = os.Rename(filepath.Join(goDirTmp, "go"), goDir); err != nil {
 			return "", err
 		}
 	}
