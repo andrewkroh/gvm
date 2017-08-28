@@ -7,15 +7,15 @@ Go from https://golang.org/dl/. Below are examples for common shells.
 
 bash:
 
-`eval "$(gvm 1.8.3)"`
+`eval "$(gvm 1.9)"`
 
 batch (windows cmd.exe):
 
-`FOR /f "tokens=*" %i IN ('"gvm.exe" gvm 1.8.3') DO %i`
+`FOR /f "tokens=*" %i IN ('"gvm.exe" gvm 1.9') DO %i`
 
 powershell:
 
-`gvm --format=powershell 1.8.3 | Invoke-Expression`
+`gvm --format=powershell 1.9 | Invoke-Expression`
 
 Or using the project's Go version as determined by the .travis.yml file. For
 example:
@@ -35,26 +35,26 @@ For Bash users:
 
 ``` bash
 # Linux Example (assumes ~/bin is in PATH).
-curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.0.2/gvm-linux-amd64
+curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.0.3/gvm-linux-amd64
 chmod +x ~/bin/gvm
-eval "$(gvm 1.8.3)"
+eval "$(gvm 1.9)"
 go version
 ```
 
 ``` bash
 # macOS Example (assumes ~/bin is in PATH).
-curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.0.2/gvm-darwin-amd64
+curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.0.3/gvm-darwin-amd64
 chmod +x ~/bin/gvm
-eval "$(gvm 1.8.3)"
+eval "$(gvm 1.9)"
 go version
 ```
 
 For Windows PowerShell users:
 
 ```
-Invoke-WebRequest -URI https://github.com/andrewkroh/gvm/releases/download/v0.0.2/gvm-
+Invoke-WebRequest -URI https://github.com/andrewkroh/gvm/releases/download/v0.0.3/gvm-
 windows-amd64.exe -Outfile C:\Windows\System32\gvm.exe
-gvm --format=powershell 1.8.3 | Invoke-Expression
+gvm --format=powershell 1.9 | Invoke-Expression
 go version
 ```
 

@@ -2,10 +2,12 @@ package main
 
 import (
 	"bytes"
-	"testing"
-
 	"fmt"
+	"os/exec"
+	"path/filepath"
+	"strconv"
 	"strings"
+	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -62,9 +64,29 @@ func TestGVMRun(t *testing.T) {
 				return
 			}
 
+			var goroot string
 			for i, line := range lines[:len(lines)-1] {
 				assert.Contains(t, line, tc.Cmds[i])
+
+				if !strings.Contains(line, "PATH") && strings.Contains(line, "GOROOT") {
+					parts := strings.SplitN(line, "=", 2)
+					if len(parts) != 2 {
+						t.Fatal("failed to parse GOROOT", line)
+					}
+					goroot = strings.TrimSpace(parts[1])
+
+					if unquotedPath, err := strconv.Unquote(goroot); err == nil {
+						goroot = unquotedPath
+					}
+				}
 			}
+
+			// Test that GOROOT/bin/go exists and is the correct version.
+			version, err := exec.Command(filepath.Join(goroot, "bin", "go"), "version").Output()
+			if err != nil {
+				t.Fatal("failed to run go version", err)
+			}
+			assert.Contains(t, string(version), tc.Version)
 		})
 	}
 
