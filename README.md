@@ -52,8 +52,7 @@ go version
 For Windows PowerShell users:
 
 ```
-Invoke-WebRequest -URI https://github.com/andrewkroh/gvm/releases/download/v0.0.3/gvm-
-windows-amd64.exe -Outfile C:\Windows\System32\gvm.exe
+Invoke-WebRequest -URI https://github.com/andrewkroh/gvm/releases/download/v0.0.3/gvm-windows-amd64.exe -Outfile C:\Windows\System32\gvm.exe
 gvm --format=powershell 1.9 | Invoke-Expression
 go version
 ```
