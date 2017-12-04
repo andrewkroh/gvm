@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.5]
+
+# Fixed
+
+- Download armv6l releases when GOARCH is ARM. be730193cac29bd64f751a7104a32883703741b1
+
 ## [0.0.4]
 
 # Fixed

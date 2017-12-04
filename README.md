@@ -31,7 +31,7 @@ Linux:
 
 ``` bash
 # Linux Example (assumes ~/bin is in PATH).
-curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.0.4/gvm-linux-amd64
+curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.0.5/gvm-linux-amd64
 chmod +x ~/bin/gvm
 eval "$(gvm 1.9.2)"
 go version
@@ -41,7 +41,7 @@ macOS:
 
 ``` bash
 # macOS Example (assumes ~/bin is in PATH).
-curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.0.4/gvm-darwin-amd64
+curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.0.5/gvm-darwin-amd64
 chmod +x ~/bin/gvm
 eval "$(gvm 1.9.2)"
 go version
@@ -50,7 +50,7 @@ go version
 Windows (Powershell):
 
 ```
-Invoke-WebRequest -URI https://github.com/andrewkroh/gvm/releases/download/v0.0.4/gvm-windows-amd64.exe -Outfile C:\Windows\System32\gvm.exe
+Invoke-WebRequest -URI https://github.com/andrewkroh/gvm/releases/download/v0.0.5/gvm-windows-amd64.exe -Outfile C:\Windows\System32\gvm.exe
 gvm --format=powershell 1.9.2 | Invoke-Expression
 go version
 ```
