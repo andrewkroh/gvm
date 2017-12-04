@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+# Fixed
+
+- Fixed documentation for batch usage (cmd.exe) on README. #5
+
 # Changed
 
 - Binary releases are built with Go 1.9.2. #6
