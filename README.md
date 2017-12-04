@@ -11,7 +11,8 @@ bash:
 
 batch (windows cmd.exe):
 
-`FOR /f "tokens=*" %i IN ('"gvm.exe" gvm 1.9.2') DO %i`
+
+`FOR /f "tokens=*" %i IN ('"gvm.exe" 1.9.2') DO %i`
 
 powershell:
 
