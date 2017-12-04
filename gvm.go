@@ -21,13 +21,13 @@ binary versions of Go from https://golang.org/dl/. Below are examples for
 common shells.
 
   bash:
-    eval "$(gvm 1.7.4)"
+    eval "$(gvm 1.9.2)"
 
   batch (windows cmd.exe):
-    FOR /f "tokens=*" %i IN ('"gvm.exe" gvm 1.7.4') DO %i
+    FOR /f "tokens=*" %i IN ('"gvm.exe" 1.9.2') DO %i
 
   powershell:
-    gvm --format=powershell 1.7.4 | Invoke-Expression
+    gvm --format=powershell 1.9.2 | Invoke-Expression
 `
 
 // Output formats.
@@ -136,7 +136,7 @@ func main() {
 	g := &GVM{out: os.Stdout}
 	app.Flag("project-go", "Use the project's Go version.").BoolVar(&g.UseProjectGo)
 	app.Flag("format", "Format to use for the shell commands. Options: bash, batch, powershell").Short('f').Default(defaultFormat()).EnumVar(&g.Format, BashFormat, BatchFormat, PowershellFormat)
-	app.Arg("version", "Go version to install (e.g. 1.7.4).").StringVar(&g.Version)
+	app.Arg("version", "Go version to install (e.g. 1.9.2).").StringVar(&g.Version)
 	app.Action(g.Run)
 
 	app.Version(version)

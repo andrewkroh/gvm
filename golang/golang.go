@@ -24,6 +24,16 @@ func init() {
 	}
 }
 
+func GOARCH() string {
+	switch runtime.GOARCH {
+	default:
+		return runtime.GOARCH
+	case "arm":
+		// The only binary releases are for ARM v6.
+		return "armv6l"
+	}
+}
+
 // SetupGolang returns the GOROOT for a Go installation.
 func SetupGolang(version string) (string, error) {
 	home, err := homeDir()
@@ -31,7 +41,7 @@ func SetupGolang(version string) (string, error) {
 		return "", err
 	}
 
-	goDir, err := golangDir(home, version, runtime.GOOS, runtime.GOARCH)
+	goDir, err := golangDir(home, version, runtime.GOOS, GOARCH())
 	if err != nil {
 		return "", err
 	}
@@ -44,7 +54,7 @@ func SetupGolang(version string) (string, error) {
 		}
 		defer os.RemoveAll(tmp)
 
-		file, err := downloadGo(version, runtime.GOOS, runtime.GOARCH, tmp)
+		file, err := downloadGo(version, runtime.GOOS, GOARCH(), tmp)
 		if err != nil {
 			return "", err
 		}
