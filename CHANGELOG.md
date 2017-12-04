@@ -4,21 +4,21 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.0.5]
 
-# Fixed
+### Fixed
 
 - Download armv6l releases when GOARCH is ARM. be730193cac29bd64f751a7104a32883703741b1
 
 ## [0.0.4]
 
-# Fixed
+### Fixed
 
 - Fixed documentation for batch usage (cmd.exe) on README. #5
 
-# Changed
+### Changed
 
 - Binary releases are built with Go 1.9.2. #6
 
-# Added
+### Added
 
 - Added ARM releases for Linux and FreeBSD. #6
 
