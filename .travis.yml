@@ -1,7 +1,7 @@
 sudo: false
 language: go
 go:
-- 1.7.5
+- 1.9.2
 
 go_import_path: github.com/andrewkroh/gvm
 
@@ -12,7 +12,7 @@ script:
 - find . -name '*.go' | grep -v vendor | xargs gofmt -l | read && echo "Code differs from gofmt's style. Run 'gofmt -w .'" 1>&2 && exit 1 || true
 - go test $(go list ./... | grep -v /vendor/)
 - mkdir -p build/bin
-- gox -ldflags "-X main.version=${TRAVIS_TAG:-SNAPSHOT}" -output="build/bin/{{.Dir}}-{{.OS}}-{{.Arch}}" -os='windows linux darwin freebsd' -arch='amd64 386' -osarch='!darwin/386'
+- gox -ldflags "-X main.version=${TRAVIS_TAG:-SNAPSHOT}" -output="build/bin/{{.Dir}}-{{.OS}}-{{.Arch}}" -os='windows linux darwin freebsd' -arch='amd64 386 arm arm64' -osarch='!darwin/386 !darwin/arm !darwin/arm64'
 - build/bin/gvm-linux-amd64 --version
 
 deploy:
@@ -23,8 +23,11 @@ deploy:
     - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-darwin-amd64"
     - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-freebsd-386"
     - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-freebsd-amd64"
+    - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-freebsd-arm"
     - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-linux-386"
     - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-linux-amd64"
+    - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-linux-arm"
+    - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-linux-arm64"
     - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-windows-386.exe"
     - "$HOME/gopath/src/github.com/andrewkroh/gvm/build/bin/gvm-windows-amd64.exe"
   on:
