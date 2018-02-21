@@ -40,9 +40,9 @@ go version
 macOS:
 
 ``` bash
-# macOS Example (assumes ~/bin is in PATH).
-curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.0.5/gvm-darwin-amd64
-chmod +x ~/bin/gvm
+# macOS Example
+curl -sL -o /usr/local/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.0.5/gvm-darwin-amd64
+chmod +x /usr/local/bin/gvm
 eval "$(gvm 1.9.2)"
 go version
 ```
