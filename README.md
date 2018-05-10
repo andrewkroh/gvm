@@ -50,6 +50,7 @@ go version
 Windows (Powershell):
 
 ```
+[Net.ServicePointManager]::SecurityProtocol = "tls12"
 Invoke-WebRequest -URI https://github.com/andrewkroh/gvm/releases/download/v0.0.5/gvm-windows-amd64.exe -Outfile C:\Windows\System32\gvm.exe
 gvm --format=powershell 1.10 | Invoke-Expression
 go version
