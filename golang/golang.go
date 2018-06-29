@@ -100,6 +100,32 @@ func downloadGo(version, goos, arch, destinationDir string) (string, error) {
 	return common.DownloadFile(goURL, destinationDir)
 }
 
+// Try to find gvm versions directory
+func VersionsDir() (string, error) {
+	home, err := homeDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(home, ".gvm", "versions"), nil
+}
+
+// get install directory for a specific go version
+func VersionDir(version string) (string, error) {
+	home, err := homeDir()
+	if err != nil {
+		return "", err
+	}
+	return golangDir(home, version, runtime.GOOS, GOARCH())
+}
+
+func HasVersion(version string) (bool, error) {
+	dir, err := VersionDir(version)
+	if err != nil {
+		return false, err
+	}
+	return isGoInstalled(dir), nil
+}
+
 func golangDir(home, version, goos, goarch string) (string, error) {
 	return filepath.Join(home, ".gvm", "versions", fmt.Sprintf("go%s.%s.%s", version, goos, goarch)), nil
 }
