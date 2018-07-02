@@ -61,7 +61,7 @@ func (m *Manager) Init() error {
 
 func (m *Manager) ensureDirStruct() error {
 	for _, dir := range []string{m.cacheDir, m.versionsDir} {
-		if err := os.MkdirAll(dir, os.ModeDir|os.ModePerm); err != nil {
+		if err := os.MkdirAll(dir, os.ModeDir|0755); err != nil {
 			return err
 		}
 	}
