@@ -1,39 +1,55 @@
-package main
+package gvm
 
 import (
-	"fmt"
-	"io/ioutil"
-	"regexp"
+	"os"
+	"path/filepath"
+	"runtime"
+
+	"github.com/andrewkroh/gvm/common"
+	"github.com/pkg/errors"
 )
 
-func useVersion(version string, useProject bool) (string, error) {
-	if useProject {
-		return getProjectGoVersion()
-	}
-	return version, nil
-}
-
-func getProjectGoVersion() (string, error) {
-	ver, err := parseTravisYml(".travis.yml")
-	if err != nil {
-		return "", fmt.Errorf("failed to detect the project's golang version: %v", err)
+func homeDir() (string, error) {
+	var homeDir string
+	if runtime.GOOS == "windows" {
+		homeDir = os.Getenv("USERPROFILE")
+	} else {
+		homeDir = os.Getenv("HOME")
 	}
 
-	return ver, nil
+	if _, err := os.Stat(homeDir); err != nil {
+		return "", errors.Wrap(err, "failed to access home dir")
+	}
+
+	return homeDir, nil
 }
 
-func parseTravisYml(name string) (string, error) {
-	file, err := ioutil.ReadFile(name)
-	if err != nil {
+func extractTo(to, file string) (string, error) {
+	tmpDir := to + ".tmp"
+	if err := os.Mkdir(tmpDir, 0755); err != nil {
+		return "", err
+	}
+	defer os.RemoveAll(tmpDir)
+
+	if err := common.Extract(file, tmpDir); err != nil {
 		return "", err
 	}
 
-	var re = regexp.MustCompile(`(?mi)^go:\s*\r?\n\s*-\s+(\S+)\s*$`)
-	matches := re.FindAllStringSubmatch(string(file), 1)
-	if len(matches) == 0 {
-		return "", fmt.Errorf("go not found in %v", name)
+	// Move into the final location.
+	if err := os.Rename(filepath.Join(tmpDir, "go"), to); err != nil {
+		return "", err
+	}
+	return to, nil
+}
+
+func existsDir(dir string) (bool, error) {
+	_, err := os.Stat(dir)
+	if err == nil {
+		return true, nil
 	}
 
-	goVersion := matches[0][1]
-	return goVersion, nil
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
 }

@@ -2,6 +2,7 @@
 *.iml
 .idea
 
-gvm
+**/gvm
+!**/gvm/
 glide.lock
 build/
