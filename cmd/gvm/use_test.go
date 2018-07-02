@@ -24,9 +24,9 @@ func TestGVMRunUse(t *testing.T) {
 		{"1.7.4", "bash", []string{"export GOROOT=", "export PATH"}},
 		{"1.7.4", "batch", []string{"set GOROOT=", "set PATH"}},
 		{"1.7.4", "powershell", []string{"$env:GOROOT = ", "$env:PATH ="}},
-		{"1.5.4", "bash", []string{"export GOROOT=", "export PATH", "export GO15VENDOREXPERIMENT=1"}},
-		{"1.5.4", "batch", []string{"set GOROOT=", "set PATH=", "set GO15VENDOREXPERIMENT=1"}},
-		{"1.5.4", "powershell", []string{"$env:GOROOT = ", "$env:PATH =", "$env:GO15VENDOREXPERIMENT=1"}},
+		{"1.5.4", "bash", []string{"export GOROOT=", "export PATH", `export GO15VENDOREXPERIMENT="1"`}},
+		{"1.5.4", "batch", []string{"set GOROOT=", "set PATH=", `set GO15VENDOREXPERIMENT=1`}},
+		{"1.5.4", "powershell", []string{"$env:GOROOT = ", "$env:PATH =", `$env:GO15VENDOREXPERIMENT = "1"`}},
 	}
 
 	for _, tc := range cases {
