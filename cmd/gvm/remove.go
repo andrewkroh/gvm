@@ -16,20 +16,28 @@ func removeCommand(cmd *kingpin.CmdClause) func(*gvm.Manager) error {
 			return fmt.Errorf("no versions specified")
 		}
 
+		var list []*gvm.GoVersion
 		for _, version := range versions {
 			ver, err := gvm.ParseVersion(version)
 			if err != nil {
 				fmt.Printf("Invalid version '%v': %v\n", version, err)
 				continue
 			}
-
-			fmt.Printf("Removing version %v...\n", version)
-			if err := manager.Remove(ver); err != nil {
-				fmt.Printf("Can not remove verions %v:\n%v\n", version, err)
-			} else {
-				fmt.Println("Removed version", version)
-			}
+			list = append(list, ver)
 		}
+
+		removeVersions(manager, list)
 		return nil
+	}
+}
+
+func removeVersions(manager *gvm.Manager, versions []*gvm.GoVersion) {
+	for _, version := range versions {
+		fmt.Printf("Removing version %v...\n", version)
+		if err := manager.Remove(version); err != nil {
+			fmt.Printf("Can not remove verions %v:\n%v\n", version, err)
+		} else {
+			fmt.Println("Removed version", version)
+		}
 	}
 }

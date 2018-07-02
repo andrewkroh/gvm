@@ -52,6 +52,20 @@ func (v *GoVersion) LessThan(v2 *GoVersion) bool {
 	return v.version.LessThan(v2.version)
 }
 
+func (v *GoVersion) Stable() bool {
+	if v.in == "tip" {
+		return false
+	}
+	return v.version.Prerelease() == ""
+}
+
+func (v *GoVersion) Prerelease() bool {
+	if v.in == "tip" {
+		return false
+	}
+	return v.version.Prerelease() != ""
+}
+
 func (v *GoVersion) VendorSupport() (has, experimental bool) {
 	if v.in == "tip" {
 		return true, false

@@ -54,7 +54,7 @@ func main() {
 	command(availCommand, "available", "list all installable go versions")
 	command(listCommand, "list", "list installed versions")
 	command(removeCommand, "remove", "remove a go version")
-	// addCommand(purgeCommand, "purge", "remove all but the newest go version")
+	command(purgeCommand, "purge", "remove all but the newest go version")
 
 	app.Version(version)
 	app.HelpFlag.Short('h')

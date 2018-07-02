@@ -87,8 +87,8 @@ func (m *Manager) Remove(version *GoVersion) error {
 	return os.RemoveAll(dir)
 }
 
-// Installed returns all installed go version (unparsed version numbers)
-func (m *Manager) Installed() ([]string, error) {
+// Installed returns all installed go version
+func (m *Manager) Installed() ([]*GoVersion, error) {
 	files, err := ioutil.ReadDir(m.versionsDir)
 	if err != nil {
 		return nil, err
@@ -96,13 +96,20 @@ func (m *Manager) Installed() ([]string, error) {
 
 	versionSuffix := fmt.Sprintf(".%v.%v", m.GOOS, m.GOARCH)
 
-	var list []string
+	var list []*GoVersion
 	for _, fi := range files {
 		name := fi.Name()
 		name = strings.TrimSuffix(name, versionSuffix)
 		name = strings.TrimPrefix(name, "go")
-		list = append(list, name)
+
+		v, err := ParseVersion(name)
+		if err != nil {
+			continue
+		}
+		list = append(list, v)
 	}
+
+	sortVersions(list)
 	return list, nil
 }
 
