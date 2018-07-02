@@ -52,6 +52,19 @@ func (v *GoVersion) LessThan(v2 *GoVersion) bool {
 	return v.version.LessThan(v2.version)
 }
 
+func (v *GoVersion) VendorSupport() (has, experimental bool) {
+	if v.in == "tip" {
+		return true, false
+	}
+
+	seg := v.version.Segments()
+	if len(seg) < 2 {
+		return false, false
+	}
+
+	return seg[1] >= 5, seg[1] == 5
+}
+
 func sortVersions(versions []*GoVersion) {
 	sort.Slice(versions, func(i, j int) bool {
 		return versions[i].LessThan(versions[j])

@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"path/filepath"
-	"strings"
 
 	"github.com/andrewkroh/gvm"
 	"github.com/andrewkroh/gvm/cmd/gvm/internal/shellfmt"
@@ -49,7 +48,7 @@ func (cmd *useCmd) Run(manager *gvm.Manager) error {
 
 	shellFmt.Set("GOROOT", goroot)
 	shellFmt.Prepend("PATH", filepath.Join(goroot, "bin"))
-	if strings.HasPrefix(version, "1.5") {
+	if _, experimental := ver.VendorSupport(); experimental {
 		shellFmt.Set("GO15VENDOREXPERIMENT", "1")
 	}
 
