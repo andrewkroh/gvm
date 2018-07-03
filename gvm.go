@@ -1,163 +1,141 @@
-package main
+package gvm
 
 import (
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
-	"regexp"
+	"path/filepath"
 	"runtime"
 	"strings"
-
-	"github.com/Sirupsen/logrus"
-	"github.com/andrewkroh/gvm/golang"
-	"github.com/pkg/errors"
-	"gopkg.in/alecthomas/kingpin.v2"
 )
 
-const usage = `gvm is a Go version manager. gvm installs a Go version and prints
-the commands to configure your environment to use it. gvm can only install
-binary versions of Go from https://golang.org/dl/. Below are examples for
-common shells.
+type Manager struct {
+	// GVM Home directory. Defaults to $HOME/.gvm
+	Home string
 
-  bash:
-    eval "$(gvm 1.10)"
+	// GOOS settings. Defaults to current OS.
+	GOOS string
 
-  batch (windows cmd.exe):
-    FOR /f "tokens=*" %i IN ('"gvm.exe" 1.10') DO %i
+	// GOARCH setting. Defaults to the current architecture.
+	GOARCH string
 
-  powershell:
-    gvm --format=powershell 1.10 | Invoke-Expression
-`
+	// Golang binary store URL. Used to download listing and go binaries.
+	// Defaults to https://storage.googleapis.com/golang
+	GoStorageHome string
 
-// Output formats.
-const (
-	BashFormat       = "bash"
-	BatchFormat      = "batch"
-	PowershellFormat = "powershell"
-)
-
-var (
-	version = "SNAPSHOT"
-
-	log = logrus.WithField("package", "main")
-)
-
-type GVM struct {
-	Version      string
-	UseProjectGo bool
-	Format       string
-
-	out io.Writer // Stdout writer (used for capturing output in tests).
+	cacheDir    string
+	versionsDir string
 }
 
-func (g *GVM) Run(_ *kingpin.ParseContext) error {
-	version := g.Version
-	if g.UseProjectGo {
-		ver, err := getProjectGoVersion()
+func (m *Manager) Init() error {
+	if m.Home == "" {
+		home, err := homeDir()
 		if err != nil {
 			return err
 		}
-		version = ver
+
+		m.Home = filepath.Join(home, ".gvm")
 	}
 
-	if version == "" {
-		return fmt.Errorf("no version specified")
-	}
-	log.Debugf("Using Go version %v", version)
-
-	goroot, err := golang.SetupGolang(version)
-	if err != nil {
-		return err
+	if m.GoStorageHome == "" {
+		m.GoStorageHome = "https://storage.googleapis.com/golang"
 	}
 
-	switch g.Format {
-	case BashFormat:
-		fmt.Fprintf(g.out, `export GOROOT="%v"`+"\n", goroot)
-		fmt.Fprintf(g.out, `export PATH="$GOROOT/bin:$PATH"`+"\n")
-		if strings.HasPrefix(version, "1.5") {
-			fmt.Fprintln(g.out, `export GO15VENDOREXPERIMENT=1`)
+	if m.GOOS == "" {
+		m.GOOS = runtime.GOOS
+	}
+	if m.GOARCH == "" {
+		switch runtime.GOARCH {
+		default:
+			m.GOARCH = runtime.GOARCH
+		case "arm":
+			// The only binary releases are for ARM v6.
+			m.GOARCH = "armv6l"
 		}
-	case BatchFormat:
-		fmt.Fprintf(g.out, `set GOROOT=%v`+"\n", goroot)
-		fmt.Fprintf(g.out, `set PATH=%s\bin;%s`+"\n", goroot, os.Getenv("PATH"))
-		if strings.HasPrefix(version, "1.5") {
-			fmt.Fprintln(g.out, `set GO15VENDOREXPERIMENT=1`)
-		}
-	case PowershellFormat:
-		fmt.Fprintf(g.out, `$env:GOROOT = "%v"`+"\n", goroot)
-		fmt.Fprintf(g.out, `$env:PATH = "$env:GOROOT\bin;$env:PATH"`+"\n")
-		if strings.HasPrefix(version, "1.5") {
-			fmt.Fprintln(g.out, `$env:GO15VENDOREXPERIMENT=1`)
-		}
-	default:
-		return errors.Errorf("invalid format option '%v'", g.Format)
 	}
 
+	m.cacheDir = filepath.Join(m.Home, "cache")
+	m.versionsDir = filepath.Join(m.Home, "versions")
+	return m.ensureDirStruct()
+}
+
+func (m *Manager) ensureDirStruct() error {
+	for _, dir := range []string{m.cacheDir, m.versionsDir} {
+		if err := os.MkdirAll(dir, os.ModeDir|0755); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
-func getProjectGoVersion() (string, error) {
-	ver, err := parseTravisYml(".travis.yml")
-	if err != nil {
-		return "", fmt.Errorf("failed to detect the project's golang version: %v", err)
-	}
-
-	return ver, nil
+func (m *Manager) Available() ([]*GoVersion, error) {
+	return m.AvailableBinaries()
 }
 
-func parseTravisYml(name string) (string, error) {
-	file, err := ioutil.ReadFile(name)
+func (m *Manager) Remove(version *GoVersion) error {
+	dir := m.VersionGoROOT(version)
+
+	fi, err := os.Stat(dir)
+	if os.IsNotExist(err) {
+		return fmt.Errorf("Version %v not installed\n", version)
+	}
+
+	if !fi.IsDir() {
+		return fmt.Errorf("Path %v is no directory", dir)
+	}
+
+	return os.RemoveAll(dir)
+}
+
+// Installed returns all installed go version
+func (m *Manager) Installed() ([]*GoVersion, error) {
+	files, err := ioutil.ReadDir(m.versionsDir)
+	if err != nil {
+		return nil, err
+	}
+
+	versionSuffix := fmt.Sprintf(".%v.%v", m.GOOS, m.GOARCH)
+
+	var list []*GoVersion
+	for _, fi := range files {
+		name := fi.Name()
+		name = strings.TrimSuffix(name, versionSuffix)
+		name = strings.TrimPrefix(name, "go")
+
+		v, err := ParseVersion(name)
+		if err != nil {
+			continue
+		}
+		list = append(list, v)
+	}
+
+	sortVersions(list)
+	return list, nil
+}
+
+// HasVersion checks if a given go version is installed
+func (m *Manager) HasVersion(version *GoVersion) (bool, error) {
+	return existsDir(m.VersionGoROOT(version))
+}
+
+// VersionGoROOT returns the GOROOT path for a go version. VersionGoROOT does
+// not check if the version is installed.
+func (m *Manager) VersionGoROOT(version *GoVersion) string {
+	return filepath.Join(m.versionsDir, m.versionDir(version))
+}
+
+func (m *Manager) versionDir(version *GoVersion) string {
+	return fmt.Sprintf("go%v.%v.%v", version, m.GOOS, m.GOARCH)
+}
+
+func (m *Manager) Install(version *GoVersion) (string, error) {
+	has, err := m.HasVersion(version)
 	if err != nil {
 		return "", err
 	}
-
-	var re = regexp.MustCompile(`(?mi)^go:\s*\r?\n\s*-\s+(\S+)\s*$`)
-	matches := re.FindAllStringSubmatch(string(file), 1)
-	if len(matches) == 0 {
-		return "", fmt.Errorf("go not found in %v", name)
+	if has {
+		return m.VersionGoROOT(version), nil
 	}
 
-	goVersion := matches[0][1]
-	return goVersion, nil
-}
-
-func defaultFormat() string {
-	if runtime.GOOS == "windows" {
-		return BatchFormat
-	}
-	return BashFormat
-}
-
-func main() {
-	app := kingpin.New("gvm", usage)
-	debug := app.Flag("debug", "Enable debug logging to stderr.").Short('d').Bool()
-
-	g := &GVM{out: os.Stdout}
-	app.Flag("project-go", "Use the project's Go version.").BoolVar(&g.UseProjectGo)
-	app.Flag("format", "Format to use for the shell commands. Options: bash, batch, powershell").Short('f').Default(defaultFormat()).EnumVar(&g.Format, BashFormat, BatchFormat, PowershellFormat)
-	app.Arg("version", "Go version to install (e.g. 1.10).").StringVar(&g.Version)
-	app.Action(g.Run)
-
-	app.Version(version)
-	app.HelpFlag.Short('h')
-	app.DefaultEnvars()
-	app.UsageTemplate(kingpin.SeparateOptionalFlagsUsageTemplate)
-
-	// Enable debug.
-	app.PreAction(func(ctx *kingpin.ParseContext) error {
-		logrus.SetLevel(logrus.DebugLevel)
-		if *debug {
-			logrus.SetOutput(os.Stderr)
-		} else {
-			logrus.SetOutput(ioutil.Discard)
-		}
-		return nil
-	})
-
-	_, err := app.Parse(os.Args[1:])
-	if err != nil {
-		app.Errorf("%v", err)
-		os.Exit(1)
-	}
+	return m.installBinary(version)
 }

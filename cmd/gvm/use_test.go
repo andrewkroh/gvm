@@ -3,32 +3,19 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"io"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"testing"
 
+	"github.com/andrewkroh/gvm"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseTravisYML(t *testing.T) {
-	ver, err := parseTravisYml("testdata/travis1.yml")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	assert.Equal(t, "1.7.4", ver)
-
-	ver, err = parseTravisYml("testdata/travis2.yml")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	assert.Equal(t, "1.7.4", ver)
-}
-
-func TestGVMRun(t *testing.T) {
+func TestGVMRunUse(t *testing.T) {
 	var cases = []struct {
 		Version string
 		Format  string
@@ -37,26 +24,33 @@ func TestGVMRun(t *testing.T) {
 		{"1.7.4", "bash", []string{"export GOROOT=", "export PATH"}},
 		{"1.7.4", "batch", []string{"set GOROOT=", "set PATH"}},
 		{"1.7.4", "powershell", []string{"$env:GOROOT = ", "$env:PATH ="}},
-		{"1.5.4", "bash", []string{"export GOROOT=", "export PATH", "export GO15VENDOREXPERIMENT=1"}},
-		{"1.5.4", "batch", []string{"set GOROOT=", "set PATH=", "set GO15VENDOREXPERIMENT=1"}},
-		{"1.5.4", "powershell", []string{"$env:GOROOT = ", "$env:PATH =", "$env:GO15VENDOREXPERIMENT=1"}},
+		{"1.5.4", "bash", []string{"export GOROOT=", "export PATH", `export GO15VENDOREXPERIMENT="1"`}},
+		{"1.5.4", "batch", []string{"set GOROOT=", "set PATH=", `set GO15VENDOREXPERIMENT=1`}},
+		{"1.5.4", "powershell", []string{"$env:GOROOT = ", "$env:PATH =", `$env:GO15VENDOREXPERIMENT = "1"`}},
 	}
 
 	for _, tc := range cases {
 		t.Run(fmt.Sprintf("%v_%v", tc.Version, tc.Format), func(t *testing.T) {
-			out := new(bytes.Buffer)
-			g := &GVM{
-				Version: tc.Version,
-				Format:  tc.Format,
-				out:     out,
-			}
 
-			err := g.Run(nil)
+			output, err := withStdout(func() {
+				manager := &gvm.Manager{}
+				if err := manager.Init(); err != nil {
+					t.Fatal(err)
+				}
+
+				cmd := &useCmd{
+					version: tc.Version,
+					format:  tc.Format,
+				}
+				err := cmd.Run(manager)
+				if err != nil {
+					t.Fatal(err)
+				}
+			})
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			output := out.String()
 			t.Log(output)
 			lines := strings.Split(output, "\n")
 
@@ -90,4 +84,33 @@ func TestGVMRun(t *testing.T) {
 		})
 	}
 
+}
+
+// capture stdout and return captured string
+func withStdout(fn func()) (string, error) {
+	stdout := os.Stdout
+
+	r, w, err := os.Pipe()
+	if err != nil {
+		return "", err
+	}
+
+	os.Stdout = w
+	defer func() {
+		os.Stdout = stdout
+	}()
+
+	outC := make(chan string)
+	go func() {
+		// capture all output
+		var buf bytes.Buffer
+		_, err = io.Copy(&buf, r)
+		r.Close()
+		outC <- buf.String()
+	}()
+
+	fn()
+	w.Close()
+	result := <-outC
+	return result, err
 }

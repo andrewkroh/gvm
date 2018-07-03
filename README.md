@@ -58,4 +58,4 @@ go version
 
 For existing Go users:
 
-`go get -u github.com/andrewkroh/gvm`
+`go get -u github.com/andrewkroh/gvm/cmd/gvm`

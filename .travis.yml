@@ -12,7 +12,7 @@ script:
 - find . -name '*.go' | grep -v vendor | xargs gofmt -l | read && echo "Code differs from gofmt's style. Run 'gofmt -w .'" 1>&2 && exit 1 || true
 - go test $(go list ./... | grep -v /vendor/)
 - mkdir -p build/bin
-- gox -ldflags "-X main.version=${TRAVIS_TAG:-SNAPSHOT}" -output="build/bin/{{.Dir}}-{{.OS}}-{{.Arch}}" -os='windows linux darwin freebsd' -arch='amd64 386 arm arm64' -osarch='!darwin/386 !darwin/arm !darwin/arm64'
+- gox -ldflags "-X main.version=${TRAVIS_TAG:-SNAPSHOT}" -output="build/bin/{{.Dir}}-{{.OS}}-{{.Arch}}" -os='windows linux darwin freebsd' -arch='amd64 386 arm arm64' -osarch='!darwin/386 !darwin/arm !darwin/arm64' ./cmd/gvm
 - build/bin/gvm-linux-amd64 --version
 
 deploy:
