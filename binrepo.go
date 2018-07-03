@@ -41,7 +41,7 @@ func (m *Manager) installBinary(version *GoVersion) (string, error) {
 }
 
 func (m *Manager) AvailableBinaries() ([]*GoVersion, error) {
-	home, goos, goarch := m.Home, m.GOOS, m.GOARCH
+	home, goos, goarch := m.GoStorageHome, m.GOOS, m.GOARCH
 
 	versions := map[string]struct{}{}
 	err := iterXMLDirListing(home, func(name string) bool {
