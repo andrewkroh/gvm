@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -67,11 +66,7 @@ func TestGVMRunUse(t *testing.T) {
 					if len(parts) != 2 {
 						t.Fatal("failed to parse GOROOT", line)
 					}
-					goroot = strings.TrimSpace(parts[1])
-
-					if unquotedPath, err := strconv.Unquote(goroot); err == nil {
-						goroot = unquotedPath
-					}
+					goroot = strings.Trim(parts[1], ` "`)
 				}
 			}
 
