@@ -1,6 +1,8 @@
 package gvm
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -52,4 +54,20 @@ func existsDir(dir string) (bool, error) {
 		return false, nil
 	}
 	return false, err
+}
+
+func writeJsonFile(filename string, value interface{}) error {
+	contents, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(filename, contents, 0644)
+}
+
+func readJsonFile(filename string, to interface{}) error {
+	contents, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(contents, to)
 }

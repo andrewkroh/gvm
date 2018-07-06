@@ -9,6 +9,8 @@ import (
 
 func installCommand(cmd *kingpin.CmdClause) func(*gvm.Manager) error {
 	var version string
+	var build bool
+	cmd.Flag("build", "Build go version from source").Short('b').BoolVar(&build)
 	cmd.Arg("version", "Go version to install (e.g. 1.10).").StringVar(&version)
 
 	return func(manager *gvm.Manager) error {
@@ -29,8 +31,14 @@ func installCommand(cmd *kingpin.CmdClause) func(*gvm.Manager) error {
 			return nil
 		}
 
-		fmt.Printf("Installing go-%v. Please wait...\n", version)
-		dir, err := manager.Install(ver)
+		var dir string
+		if build {
+			fmt.Printf("Building go-%v. Please wait...\n", version)
+			dir, err = manager.Build(ver)
+		} else {
+			fmt.Printf("Installing go-%v. Please wait...\n", version)
+			dir, err = manager.Install(ver)
+		}
 		if err != nil {
 			fmt.Println("Installation failed with:\n", err)
 			return err

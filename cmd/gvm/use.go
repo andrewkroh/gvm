@@ -11,6 +11,7 @@ import (
 
 type useCmd struct {
 	version string
+	build   bool
 	format  string
 }
 
@@ -18,6 +19,7 @@ func useCommand(cmd *kingpin.CmdClause) func(*gvm.Manager) error {
 	ctx := &useCmd{}
 
 	cmd.Arg("version", "Go version to install (e.g. 1.10).").StringVar(&ctx.version)
+	cmd.Flag("build", "Build go version from source").Short('b').BoolVar(&ctx.build)
 	cmd.Flag("format", "Format to use for the shell commands. Options: bash, batch, powershell").
 		Short('f').
 		Default(shellfmt.DefaultFormat()).
@@ -41,7 +43,12 @@ func (cmd *useCmd) Run(manager *gvm.Manager) error {
 		return err
 	}
 
-	goroot, err := manager.Install(ver)
+	var goroot string
+	if cmd.build {
+		goroot, err = manager.Build(ver)
+	} else {
+		goroot, err = manager.Install(ver)
+	}
 	if err != nil {
 		return err
 	}

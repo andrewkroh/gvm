@@ -50,6 +50,7 @@ func main() {
 
 	command(useCommand, "use", "prepare go version and print environment variables").
 		Default()
+	command(initCommand, "init", "init .gvm and update source cache")
 	command(installCommand, "install", "install go version if not already installed")
 	command(availCommand, "available", "list all installable go versions")
 	command(listCommand, "list", "list installed versions")
