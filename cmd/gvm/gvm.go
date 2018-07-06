@@ -48,6 +48,12 @@ func main() {
 		return cmd
 	}
 
+	app.Flag("os", "Go binaries target os.").StringVar(&manager.GOOS)
+	app.Flag("arch", "Go binaries target architecture.").StringVar(&manager.GOOS)
+	app.Flag("home", "GVM home directory.").StringVar(&manager.Home)
+	app.Flag("url", "Go binaries repository base URL.").StringVar(&manager.GoStorageHome)
+	app.Flag("repository", "Go upstream git repository.").StringVar(&manager.GoSourceURL)
+
 	command(useCommand, "use", "prepare go version and print environment variables").
 		Default()
 	command(initCommand, "init", "init .gvm and update source cache")

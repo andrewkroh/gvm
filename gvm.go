@@ -25,6 +25,9 @@ type Manager struct {
 	// Defaults to https://storage.googleapis.com/golang
 	GoStorageHome string
 
+	// GoSourceURL configres the update git repository to download and update local
+	// source checkouts from.
+	// Defaults to https://go.googlesource.com/go
 	GoSourceURL string
 
 	Logger logrus.FieldLogger
