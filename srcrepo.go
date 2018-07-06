@@ -1,6 +1,7 @@
 package gvm
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -123,9 +124,17 @@ func buildGo(log logrus.FieldLogger, buildDir, repo, version, tag string) error 
 		return err
 	}
 
+	bootstrap := os.Getenv("GOROOT_BOOTSTRAP")
+	if bootstrap == "" {
+		bootstrap = os.Getenv("GOROOT")
+		if bootstrap == "" {
+			return errors.New("GOROOT or GOROOT_BOOTSTRAP must be set")
+		}
+	}
+
 	if version != "tip" {
 		// write VERSION file
-		versionFile := filepath.Join(tmp, "go", "VERSION")
+		versionFile := filepath.Join(tmp, "VERSION")
 		err := ioutil.WriteFile(versionFile, []byte(version), 0644)
 		if err != nil {
 			return err
@@ -144,6 +153,9 @@ func buildGo(log logrus.FieldLogger, buildDir, repo, version, tag string) error 
 		cmd = makeCommand("cmd", "/C", "make.bat")
 	} else {
 		cmd = makeCommand("bash", "make.bash")
+	}
+	cmd.Env = []string{
+		"GOROOT_BOOTSTRAP=" + bootstrap,
 	}
 	return cmd.WithDir(srcDir).WithLogger(log).Exec()
 }

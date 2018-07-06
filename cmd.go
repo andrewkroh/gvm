@@ -3,6 +3,7 @@ package gvm
 import (
 	"bufio"
 	"io"
+	"os"
 	"os/exec"
 	"sync"
 
@@ -13,6 +14,7 @@ type command struct {
 	Path   string
 	Args   []string
 	Dir    string
+	Env    []string
 	Stdout func(string)
 	Stderr func(string)
 }
@@ -54,6 +56,10 @@ func makeOutLog(fn func(...interface{})) func(string) {
 func (c *command) Exec() error {
 	cmd := exec.Command(c.Path, c.Args...)
 	cmd.Dir = c.Dir
+
+	if len(c.Env) > 0 {
+		cmd.Env = append(os.Environ(), c.Env...)
+	}
 
 	var err error
 	var stdout, stderr io.ReadCloser
