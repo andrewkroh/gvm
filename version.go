@@ -84,3 +84,19 @@ func sortVersions(versions []*GoVersion) {
 		return versions[i].LessThan(versions[j])
 	})
 }
+
+func (v *GoVersion) IsTip() bool {
+	return v.in == "tip"
+}
+
+func findVersion(version *GoVersion, versions []*GoVersion) int {
+	i := sort.Search(len(versions), func(i int) bool {
+		ver := versions[i]
+		return version.in == ver.in || version.LessThan(ver)
+	})
+
+	if i < len(versions) && versions[i].in == version.in {
+		return i
+	}
+	return -1
+}

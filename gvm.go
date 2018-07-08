@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"github.com/Sirupsen/logrus"
 )
 
 type Manager struct {
@@ -23,8 +25,16 @@ type Manager struct {
 	// Defaults to https://storage.googleapis.com/golang
 	GoStorageHome string
 
+	// GoSourceURL configres the update git repository to download and update local
+	// source checkouts from.
+	// Defaults to https://go.googlesource.com/go
+	GoSourceURL string
+
+	Logger logrus.FieldLogger
+
 	cacheDir    string
 	versionsDir string
+	logsDir     string
 }
 
 func (m *Manager) Init() error {
@@ -41,6 +51,10 @@ func (m *Manager) Init() error {
 		m.GoStorageHome = "https://storage.googleapis.com/golang"
 	}
 
+	if m.GoSourceURL == "" {
+		m.GoSourceURL = "https://go.googlesource.com/go"
+	}
+
 	if m.GOOS == "" {
 		m.GOOS = runtime.GOOS
 	}
@@ -54,13 +68,22 @@ func (m *Manager) Init() error {
 		}
 	}
 
+	if m.Logger == nil {
+		m.Logger = logrus.StandardLogger()
+	}
+
 	m.cacheDir = filepath.Join(m.Home, "cache")
 	m.versionsDir = filepath.Join(m.Home, "versions")
+	m.logsDir = filepath.Join(m.Home, "logs")
 	return m.ensureDirStruct()
 }
 
+func (m *Manager) UpdateCache() error {
+	return m.updateSrcCache()
+}
+
 func (m *Manager) ensureDirStruct() error {
-	for _, dir := range []string{m.cacheDir, m.versionsDir} {
+	for _, dir := range []string{m.cacheDir, m.versionsDir, m.logsDir} {
 		if err := os.MkdirAll(dir, os.ModeDir|0755); err != nil {
 			return err
 		}
@@ -68,8 +91,36 @@ func (m *Manager) ensureDirStruct() error {
 	return nil
 }
 
-func (m *Manager) Available() ([]*GoVersion, error) {
-	return m.AvailableBinaries()
+func (m *Manager) Available() ([]*GoVersion, []bool, error) {
+	if !m.hasSrcCache() {
+		versions, err := m.AvailableBinaries()
+		if err != nil {
+			return nil, nil, err
+		}
+
+		hasBin := make([]bool, len(versions))
+		for i := range hasBin {
+			hasBin[i] = true
+		}
+		return versions, hasBin, nil
+	}
+
+	src, err := m.AvailableSource()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	hasBin := make([]bool, len(src))
+	bin, err := m.AvailableBinaries()
+	if err != nil {
+		return src, hasBin, nil
+	}
+
+	for i, ver := range src {
+		hasBin[i] = findVersion(ver, bin) >= 0
+	}
+
+	return src, hasBin, nil
 }
 
 func (m *Manager) Remove(version *GoVersion) error {
@@ -128,7 +179,11 @@ func (m *Manager) versionDir(version *GoVersion) string {
 	return fmt.Sprintf("go%v.%v.%v", version, m.GOOS, m.GOARCH)
 }
 
-func (m *Manager) Install(version *GoVersion) (string, error) {
+func (m *Manager) Build(version *GoVersion) (string, error) {
+	if version.IsTip() {
+		return m.ensureUpToDateTip()
+	}
+
 	has, err := m.HasVersion(version)
 	if err != nil {
 		return "", err
@@ -137,5 +192,53 @@ func (m *Manager) Install(version *GoVersion) (string, error) {
 		return m.VersionGoROOT(version), nil
 	}
 
-	return m.installBinary(version)
+	return m.installSrc(version)
+}
+
+func (m *Manager) Install(version *GoVersion) (string, error) {
+	if version.IsTip() {
+		return m.ensureUpToDateTip()
+	}
+
+	has, err := m.HasVersion(version)
+	if err != nil {
+		return "", err
+	}
+	if has {
+		return m.VersionGoROOT(version), nil
+	}
+
+	tryBinary := !version.IsTip()
+	if tryBinary {
+		dir, err := m.installBinary(version)
+		if err == nil {
+			return dir, err
+		}
+	}
+
+	return m.installSrc(version)
+}
+
+func (m *Manager) ensureUpToDateTip() (string, error) {
+	version, _ := ParseVersion("tip")
+
+	has, err := m.HasVersion(version)
+	if err != nil {
+		return "", err
+	}
+
+	// no updates since last build -> return installed version
+	if has {
+		updates, err := m.tryRefreshSrcCache()
+		if err != nil {
+			return "", err
+		}
+
+		if !updates {
+			return m.VersionGoROOT(version), nil
+		}
+	}
+
+	// new updates in cache -> rebuild
+	return m.installSrc(version)
 }
