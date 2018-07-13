@@ -18,7 +18,7 @@ type useCmd struct {
 func useCommand(cmd *kingpin.CmdClause) func(*gvm.Manager) error {
 	ctx := &useCmd{}
 
-	cmd.Arg("version", "Go version to install (e.g. 1.10).").StringVar(&ctx.version)
+	cmd.Arg("version", "Go version to install (e.g. 1.10.3).").StringVar(&ctx.version)
 	cmd.Flag("build", "Build go version from source").Short('b').BoolVar(&ctx.build)
 	cmd.Flag("format", "Format to use for the shell commands. Options: bash, batch, powershell").
 		Short('f').
