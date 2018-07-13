@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.0]
+
+### Added
+
+- Add the ability to build Go from source (e.g. gvm tip).
+- Add `gvm init` command that clones the Go git repository or forces
+  a git fetch.
+- Add `gvm install` command.
+- Add `gvm list` command.
+- Add `gvm available` command.
+- Add `gvm purge` command.
+- Add `gvm remove` command.
+
 ## [0.0.5]
 
 ### Fixed
