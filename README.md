@@ -2,8 +2,9 @@ gvm
 ===
 
 gvm is a Go version manager. gvm installs a Go version and prints the commands
-to configure your environment to use it. gvm can only install binary versions of
-Go from https://golang.org/dl/. Below are examples for common shells.
+to configure your environment to use it. gvm can install Go binary versions from
+https://golang.org/dl/ or build it from source. Below are examples for common
+shells.
 
 bash:
 
