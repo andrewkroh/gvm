@@ -49,9 +49,9 @@ func (m *Manager) updateSrcCache() error {
 	}
 
 	if !exists {
-		err = gitClone(m.Logger, localGoSrc, m.GoSourceURL, true)
+		err = gitClone(m.Logger, localGoSrc, m.GoSourceURL, false)
 	} else {
-		err = gitFetch(m.Logger, localGoSrc)
+		err = gitPull(m.Logger, localGoSrc)
 	}
 	if err != nil {
 		return err
