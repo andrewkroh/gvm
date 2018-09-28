@@ -59,7 +59,7 @@ go version
 
 Fish Shell:
 
-Use `gvm` with fish shell by executing `gvm 1.10.3 | source` in lieu of using `eval`
+Use `gvm` with fish shell by executing `gvm 1.10.3 | source` in lieu of using `eval`.
 
 For existing Go users:
 
