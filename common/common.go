@@ -22,7 +22,7 @@ func DownloadFile(url, destinationDir string) (string, error) {
 	for a := 1; a <= 3; a++ {
 		name, err, retry = downloadFile(url, destinationDir)
 		if err != nil && retry {
-			log.WithError(err).Debug(fmt.Sprintf("Attempt %d failed", a))
+			log.WithError(err).Debugf("Attempt %d failed", a)
 			continue
 		}
 		break
