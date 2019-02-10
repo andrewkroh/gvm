@@ -1,7 +1,6 @@
 package common
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"os"
