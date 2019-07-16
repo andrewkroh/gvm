@@ -4,5 +4,4 @@
 
 **/gvm
 !**/gvm/
-glide.lock
 build/
