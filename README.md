@@ -8,16 +8,16 @@ shells.
 
 bash:
 
-`eval "$(gvm 1.12.6)"`
+`eval "$(gvm 1.12.7)"`
 
 batch (windows cmd.exe):
 
 
-`FOR /f "tokens=*" %i IN ('"gvm.exe" 1.12.6') DO %i`
+`FOR /f "tokens=*" %i IN ('"gvm.exe" 1.12.7') DO %i`
 
 powershell:
 
-`gvm --format=powershell 1.12.6 | Invoke-Expression`
+`gvm --format=powershell 1.12.7 | Invoke-Expression`
 
 Installation
 ------------
@@ -34,7 +34,7 @@ Linux:
 # Linux Example (assumes ~/bin is in PATH).
 curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.2.0/gvm-linux-amd64
 chmod +x ~/bin/gvm
-eval "$(gvm 1.12.6)"
+eval "$(gvm 1.12.7)"
 go version
 ```
 
@@ -44,7 +44,7 @@ macOS:
 # macOS Example
 curl -sL -o /usr/local/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.2.0/gvm-darwin-amd64
 chmod +x /usr/local/bin/gvm
-eval "$(gvm 1.12.6)"
+eval "$(gvm 1.12.7)"
 go version
 ```
 
@@ -53,13 +53,13 @@ Windows (Powershell):
 ```
 [Net.ServicePointManager]::SecurityProtocol = "tls12"
 Invoke-WebRequest -URI https://github.com/andrewkroh/gvm/releases/download/v0.2.0/gvm-windows-amd64.exe -Outfile C:\Windows\System32\gvm.exe
-gvm --format=powershell 1.12.6 | Invoke-Expression
+gvm --format=powershell 1.12.7 | Invoke-Expression
 go version
 ```
 
 Fish Shell:
 
-Use `gvm` with fish shell by executing `gvm 1.12.6 | source` in lieu of using `eval`.
+Use `gvm` with fish shell by executing `gvm 1.12.7 | source` in lieu of using `eval`.
 
 For existing Go users:
 
