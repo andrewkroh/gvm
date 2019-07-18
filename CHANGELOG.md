@@ -2,11 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.2.1]
 
 ### Changed
 
-- Update repo to use `go mod` for dependency management.
+- Update repo to use `go mod` for dependency management. #17
 
 ## [0.2.0]
 
