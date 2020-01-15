@@ -13,7 +13,7 @@ bash:
 batch (windows cmd.exe):
 
 
-`FOR /f "tokens=*" %i IN ('"gvm.exe" 1.12.7') DO %i`
+`FOR /f "tokens=*" %%i IN ('"gvm.exe" 1.12.7') DO %i`
 
 powershell:
 
