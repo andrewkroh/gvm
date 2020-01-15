@@ -10,8 +10,7 @@ bash:
 
 `eval "$(gvm 1.12.7)"`
 
-batch (windows cmd.exe):
-
+cmd.exe (for batch scripts %i should be substituted with %%i):
 
 `FOR /f "tokens=*" %i IN ('"gvm.exe" 1.12.7') DO %i`
 
