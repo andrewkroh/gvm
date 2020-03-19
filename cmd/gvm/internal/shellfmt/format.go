@@ -100,10 +100,10 @@ func (f *batchFormatter) Set(name, val string) string {
 }
 
 func (f *batchFormatter) Prepend(name, val string) string {
-	return fmt.Sprintf(`set %v=%v;$%v`, name, val, os.Getenv(name))
+	return fmt.Sprintf(`set %v=%v;%v`, name, val, os.Getenv(name))
 }
 func (f *batchFormatter) Append(name, val string) string {
-	return fmt.Sprintf(`set %v=$%v;%v`, name, os.Getenv(name), val)
+	return fmt.Sprintf(`set %v=%v;%v`, name, os.Getenv(name), val)
 }
 
 func (f *powershellFormatter) Set(name, val string) string {
