@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed 
 
 - Use Go 1.15 to build project. [#28](https://github.com/andrewkroh/gvm/pull/28)
+- Log a warning when binary package install fails. [#29](https://github.com/andrewkroh/gvm/pull/29)
 
 ## [0.2.2]
 

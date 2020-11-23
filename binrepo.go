@@ -34,7 +34,7 @@ func (m *Manager) installBinary(version *GoVersion) (string, error) {
 	goURL := fmt.Sprintf("%s/go%v.%v-%v.%v", m.GoStorageHome, version, m.GOOS, m.GOARCH, extension)
 	path, err := common.DownloadFile(goURL, tmp)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed downloading from %v: %w", goURL, err)
 	}
 
 	return extractTo(m.VersionGoROOT(version), path)
