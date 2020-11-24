@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
+
+	"github.com/andrewkroh/gvm/common"
 )
 
 type srcCacheInfo struct {
@@ -107,7 +109,7 @@ func (m *Manager) installSrc(version *GoVersion) (string, error) {
 
 	// move final build result into destination
 	log.Println("rename")
-	if err = os.Rename(filepath.Join(tmpRoot, "go"), to); err != nil {
+	if err = common.Rename(filepath.Join(tmpRoot, "go"), to); err != nil {
 		return "", err
 	}
 	return to, nil
@@ -292,7 +294,7 @@ func gitClone(logger logrus.FieldLogger, to string, url string, bare bool) error
 	}
 
 	// Move into the final location.
-	return os.Rename(tmpDir, to)
+	return common.Rename(tmpDir, to)
 }
 
 func gitLastCommitTs(logger logrus.FieldLogger, path string) (time.Time, error) {

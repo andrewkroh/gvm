@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix errors with renames failing across disks by falling back to a copy/delete. [#30](https://github.com/andrewkroh/gvm/pull/30)
+
 ## [0.2.3]
 
 ### Changed 

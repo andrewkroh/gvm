@@ -29,7 +29,9 @@ func unzip(sourceFile, destinationDir string) error {
 	}
 	defer r.Close()
 
-	os.MkdirAll(destinationDir, 0755)
+	if err = os.MkdirAll(destinationDir, 0755); err != nil {
+		return fmt.Errorf("failed to mkdir %v: %w", destinationDir, err)
+	}
 
 	extractAndWriteFile := func(f *zip.File) error {
 		rc, err := f.Open()
@@ -41,9 +43,13 @@ func unzip(sourceFile, destinationDir string) error {
 		path := filepath.Join(destinationDir, f.Name)
 
 		if f.FileInfo().IsDir() {
-			os.MkdirAll(path, f.Mode())
+			if err = os.MkdirAll(path, f.Mode()); err != nil {
+				return fmt.Errorf("failed to mkdir %v: %w", path, err)
+			}
 		} else {
-			os.MkdirAll(filepath.Dir(path), f.Mode())
+			if err = os.MkdirAll(filepath.Dir(path), f.Mode()); err != nil {
+				return fmt.Errorf("failed to mkdir %v: %w", path, err)
+			}
 			f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
 			if err != nil {
 				return err
@@ -61,7 +67,7 @@ func unzip(sourceFile, destinationDir string) error {
 	for _, f := range r.File {
 		err := extractAndWriteFile(f)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed extracting %q from %q: %w", f.Name, sourceFile, err)
 		}
 	}
 
@@ -70,11 +76,9 @@ func unzip(sourceFile, destinationDir string) error {
 
 func untar(sourceFile, destinationDir string) error {
 	file, err := os.Open(sourceFile)
-
 	if err != nil {
 		return err
 	}
-
 	defer file.Close()
 
 	var fileReader io.ReadCloser = file
@@ -102,29 +106,27 @@ func untar(sourceFile, destinationDir string) error {
 		switch header.Typeflag {
 		case tar.TypeDir:
 			err = os.MkdirAll(filename, os.FileMode(header.Mode)) // or use 0755 if you prefer
-
 			if err != nil {
 				return err
 			}
 
 		case tar.TypeReg:
 			writer, err := os.Create(filename)
-
 			if err != nil {
 				return err
 			}
 
-			io.Copy(writer, tarBallReader)
+			if _, err = io.Copy(writer, tarBallReader); err != nil {
+				return err
+			}
 
-			err = os.Chmod(filename, os.FileMode(header.Mode))
-
-			if err != nil {
+			if err = os.Chmod(filename, os.FileMode(header.Mode)); err != nil {
 				return err
 			}
 
 			writer.Close()
 		default:
-			return fmt.Errorf("Unable to untar type: %c in file %s", header.Typeflag, filename)
+			return fmt.Errorf("unable to untar type: %c in file %s", header.Typeflag, filename)
 		}
 	}
 	return nil
