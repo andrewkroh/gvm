@@ -212,8 +212,11 @@ func (m *Manager) Install(version *GoVersion) (string, error) {
 	if tryBinary {
 		dir, err := m.installBinary(version)
 		if err == nil {
-			return dir, err
+			return dir, nil
 		}
+		m.Logger.WithFields(logrus.Fields{"version": version, "error": err}).
+			Warn("Failed to install Go from binary package. Trying to " +
+				"install from source.")
 	}
 
 	return m.installSrc(version)
