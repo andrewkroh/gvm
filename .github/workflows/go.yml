@@ -23,6 +23,12 @@ jobs:
       - name: check fmt
         run: find . -name '*.go' | xargs gofmt -l | read && echo "Code differs from gofmt's style. Run 'gofmt -w .'" 1>&2 && exit 1 || true
 
+      - name: check go.mod
+        shell: bash
+        run: |
+          go mod tidy
+          git diff-index --quiet HEAD
+
       - name: go test
         run: go test ./...
 
