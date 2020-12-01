@@ -7,8 +7,9 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/andrewkroh/gvm/common"
 	"github.com/pkg/errors"
+
+	"github.com/andrewkroh/gvm/common"
 )
 
 func homeDir() (string, error) {
@@ -38,7 +39,7 @@ func extractTo(to, file string) (string, error) {
 	}
 
 	// Move into the final location.
-	if err := os.Rename(filepath.Join(tmpDir, "go"), to); err != nil {
+	if err := common.Rename(filepath.Join(tmpDir, "go"), to); err != nil {
 		return "", err
 	}
 	return to, nil

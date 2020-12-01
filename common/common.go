@@ -1,12 +1,14 @@
 package common
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 	"time"
 
+	"github.com/otiai10/copy"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -56,4 +58,24 @@ func downloadFile(url, destinationDir string) (string, error, bool) {
 	log.WithFields(logrus.Fields{"file": name, "size_bytes": numBytes}).Debug("download complete")
 
 	return name, nil, false
+}
+
+// Rename renames src to dest. If the rename operation fails it will attempt to
+// recursively copy the src to dest then delete src.
+func Rename(src, dest string) error {
+	err := os.Rename(src, dest)
+	if err == nil {
+		return nil
+	}
+
+	// Try copying.
+	log := log.WithFields(logrus.Fields{"function": "Rename"})
+	log.WithError(err).Debug("Falling back to a recursive copy after the rename operation failed.")
+	if err = copy.Copy(src, dest); err != nil {
+		return fmt.Errorf("copy/delete operation failed: %w", err)
+	}
+	if err = os.RemoveAll(src); err != nil {
+		log.WithError(err).Warnf("Failed to delete source (%q) after copy operation.", src)
+	}
+	return nil
 }
