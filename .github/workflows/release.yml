@@ -12,6 +12,10 @@ jobs:
       - name: checkout
         uses: actions/checkout@master
 
+      - name: set release version
+        id: release_version
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+
       - name: set up Go
         uses: actions/setup-go@v1
         with:
@@ -27,7 +31,7 @@ jobs:
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
           mkdir -p build/bin
-          gox -ldflags '-X main.version=${{ github.ref }}' \
+          gox -ldflags '-X main.version=${{ steps.release_version.outputs.tag }}' \
               -output='build/bin/{{.Dir}}-{{.OS}}-{{.Arch}}' \
               -os='windows linux darwin freebsd' \
               -arch='amd64 386 arm arm64' \
