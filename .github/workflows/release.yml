@@ -58,6 +58,6 @@ jobs:
                 repo: context.repo.repo,
                 release_id: release_id,
                 name: file,
-                data: await fs.readFile(`./${file}`)
+                data: await fs.readFile(`build/bin/${file}`)
               });
             }
