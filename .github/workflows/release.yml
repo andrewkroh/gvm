@@ -27,7 +27,7 @@ jobs:
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
           mkdir -p build/bin
-          gox -ldflags '-X main.version=${{ github.sha }}' \
+          gox -ldflags '-X main.version=${{ github.ref }}' \
               -output='build/bin/{{.Dir}}-{{.OS}}-{{.Arch}}' \
               -os='windows linux darwin freebsd' \
               -arch='amd64 386 arm arm64' \
