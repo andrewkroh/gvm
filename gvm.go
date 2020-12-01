@@ -1,6 +1,7 @@
 package gvm
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -9,6 +10,8 @@ import (
 	"strings"
 
 	"github.com/sirupsen/logrus"
+
+	"github.com/andrewkroh/gvm/common"
 )
 
 type Manager struct {
@@ -214,9 +217,10 @@ func (m *Manager) Install(version *GoVersion) (string, error) {
 		if err == nil {
 			return dir, nil
 		}
-		m.Logger.WithFields(logrus.Fields{"version": version, "error": err}).
-			Warn("Failed to install Go from binary package. Trying to " +
-				"install from source.")
+		// Only continue to installing from source if the server confirms 404.
+		if !errors.Is(err, common.ErrNotFound) {
+			return "", err
+		}
 	}
 
 	return m.installSrc(version)

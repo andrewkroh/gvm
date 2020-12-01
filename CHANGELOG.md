@@ -7,7 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fix errors with renames failing across disks by falling back to a copy/delete. [#31](https://github.com/andrewkroh/gvm/pull/31)
-
+- Fall back to a source code based install only when binary package URL returns
+  with HTTP 404. [#30](https://github.com/andrewkroh/gvm/issues/30) [#32](https://github.com/andrewkroh/gvm/pull/32)
+  
 ## [0.2.3]
 
 ### Changed 
