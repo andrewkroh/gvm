@@ -221,6 +221,7 @@ func (m *Manager) Install(version *GoVersion) (string, error) {
 		if !errors.Is(err, common.ErrNotFound) {
 			return "", err
 		}
+		m.Logger.Debug("Binary release not found on server. Trying to install from source.")
 	}
 
 	return m.installSrc(version)
