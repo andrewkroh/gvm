@@ -50,13 +50,14 @@ jobs:
           script: |
             const path = require('path');
             const fs = require('fs');
-            const release_id = '${{ needs.create_release.outputs.id }}';
+            const release_id = '${{ steps.create_release.outputs.id }}';
             for (let file of await fs.readdir('build/bin')) {
               console.log('Uploading', file);
 
               await github.repos.uploadReleaseAsset({
-                owner, repo,
-                release_id: release.data.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: release_id,
                 name: file,
                 data: await fs.readFile(`./${file}`)
               });
