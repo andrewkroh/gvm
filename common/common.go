@@ -15,15 +15,18 @@ import (
 
 var log = logrus.WithField("package", "common")
 
+// ErrNotFound is returned when the download fails due to HTTP 404 Not Found.
+var ErrNotFound = errors.New("not found")
+
 func DownloadFile(url, destinationDir string) (string, error) {
-	log.WithField("url", url).Debug("downloading file")
+	log.WithField("url", url).Debug("Downloading file")
 	var name string
 	var err error
 	var retry bool
 	for a := 1; a <= 3; a++ {
 		name, err, retry = downloadFile(url, destinationDir)
 		if err != nil && retry {
-			log.WithError(err).Debugf("Attempt %d failed", a)
+			log.WithError(err).Debugf("Download attempt %d failed", a)
 			continue
 		}
 		break
@@ -31,7 +34,7 @@ func DownloadFile(url, destinationDir string) (string, error) {
 	return name, err
 }
 
-func downloadFile(url, destinationDir string) (string, error, bool) {
+func downloadFile(url, destinationDir string) (path string, err error, retryable bool) {
 	client := http.Client{
 		Timeout: time.Duration(3 * time.Minute),
 	}
@@ -42,7 +45,10 @@ func downloadFile(url, destinationDir string) (string, error, bool) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", errors.Errorf("download failed with http status %v", resp.StatusCode), resp.StatusCode != http.StatusNotFound
+		if resp.StatusCode == http.StatusNotFound {
+			return "", ErrNotFound, false
+		}
+		return "", errors.Errorf("download failed with http status %v", resp.StatusCode), true
 	}
 
 	name := filepath.Join(destinationDir, filepath.Base(url))
@@ -55,7 +61,7 @@ func downloadFile(url, destinationDir string) (string, error, bool) {
 	if err != nil {
 		return "", errors.Wrap(err, "failed to write file to disk"), true
 	}
-	log.WithFields(logrus.Fields{"file": name, "size_bytes": numBytes}).Debug("download complete")
+	log.WithFields(logrus.Fields{"file": name, "size_bytes": numBytes}).Debug("Download complete")
 
 	return name, nil, false
 }
