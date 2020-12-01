@@ -48,8 +48,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const path = require('path');
-            const fs = require('fs');
+            const fs = require('fs').promises;
             const release_id = '${{ steps.create_release.outputs.id }}';
             for (let file of await fs.readdir('build/bin')) {
               console.log('Uploading', file);
