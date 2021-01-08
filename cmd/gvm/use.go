@@ -4,15 +4,17 @@ import (
 	"fmt"
 	"path/filepath"
 
+	kingpin "gopkg.in/alecthomas/kingpin.v2"
+
 	"github.com/andrewkroh/gvm"
 	"github.com/andrewkroh/gvm/cmd/gvm/internal/shellfmt"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
 type useCmd struct {
 	version string
-	build   bool
-	format  string
+	build,
+	noInstall bool
+	format string
 }
 
 func useCommand(cmd *kingpin.CmdClause) func(*gvm.Manager) error {
@@ -20,6 +22,7 @@ func useCommand(cmd *kingpin.CmdClause) func(*gvm.Manager) error {
 
 	cmd.Arg("version", "Go version to install (e.g. 1.10.3).").StringVar(&ctx.version)
 	cmd.Flag("build", "Build go version from source").Short('b').BoolVar(&ctx.build)
+	cmd.Flag("no-install", "Don't install if missing").Short('n').BoolVar(&ctx.noInstall)
 	cmd.Flag("format", "Format to use for the shell commands. Options: bash, batch, powershell").
 		Short('f').
 		Default(shellfmt.DefaultFormat()).
@@ -46,6 +49,15 @@ func (cmd *useCmd) Run(manager *gvm.Manager) error {
 	var goroot string
 	if cmd.build {
 		goroot, err = manager.Build(ver)
+	} else if cmd.noInstall {
+		has, err := manager.HasVersion(ver)
+		if err != nil {
+			return err
+		}
+		if !has {
+			return fmt.Errorf("version %s not installed and --no-install enabled", ver)
+		}
+		goroot = manager.VersionGoROOT(ver)
 	} else {
 		goroot, err = manager.Install(ver)
 	}
