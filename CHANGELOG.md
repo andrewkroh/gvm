@@ -4,6 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0]
+
+### Added
+
+- Added new `gvm use` flag `--no-install` (or `-n`) to disable installing
+  and updating from source. For example, `gvm use tip -n` will use the tip
+  assuming you have it already installed, but will not trigger an update.
+  [#35](https://github.com/andrewkroh/gvm/pull/35)
+
 ## [0.2.4]
 
 ### Fixed
@@ -86,3 +95,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.0.1]
 
 Initial release.
+
+[Unreleased]: https://github.com/andrewkroh/gvm/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/andrewkroh/gvm/releases/tag/v0.3.0
+[0.2.4]: https://github.com/andrewkroh/gvm/releases/tag/v0.2.4
+[0.2.3]: https://github.com/andrewkroh/gvm/releases/tag/v0.2.3
+[0.2.2]: https://github.com/andrewkroh/gvm/releases/tag/v0.2.2
+[0.2.1]: https://github.com/andrewkroh/gvm/releases/tag/v0.2.1
+[0.2.0]: https://github.com/andrewkroh/gvm/releases/tag/v0.2.0
+[0.1.0]: https://github.com/andrewkroh/gvm/releases/tag/v0.1.0
+[0.0.5]: https://github.com/andrewkroh/gvm/releases/tag/v0.0.5
+[0.0.4]: https://github.com/andrewkroh/gvm/releases/tag/v0.0.4
+[0.0.3]: https://github.com/andrewkroh/gvm/releases/tag/v0.0.3
+[0.0.2]: https://github.com/andrewkroh/gvm/releases/tag/v0.0.2
+[0.0.1]: https://github.com/andrewkroh/gvm/releases/tag/v0.0.1
