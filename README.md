@@ -37,11 +37,20 @@ eval "$(gvm 1.15.6)"
 go version
 ```
 
-macOS:
-
+macOS (amd64):
 ``` bash
 # macOS Example
 curl -sL -o /usr/local/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.3.0/gvm-darwin-amd64
+chmod +x /usr/local/bin/gvm
+eval "$(gvm 1.15.6)"
+go version
+```
+
+macOS (arm64, aka M1):
+
+``` bash
+# macOS Example
+curl -sL -o /usr/local/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.3.0/gvm-darwin-arm64
 chmod +x /usr/local/bin/gvm
 eval "$(gvm 1.15.6)"
 go version

@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Updated Go version used in building to 1.16.
+- Add an artifact for Apple M1 (darwin/arm64).
+
 ## [0.3.0]
 
 ### Added
