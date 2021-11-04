@@ -35,7 +35,7 @@ jobs:
               -output='build/bin/{{.Dir}}-{{.OS}}-{{.Arch}}' \
               -os='windows linux darwin freebsd' \
               -arch='amd64 386 arm arm64' \
-              -osarch='!darwin/386 !darwin/arm !darwin/arm64' ./cmd/gvm
+              -osarch='!darwin/386 !darwin/arm' ./cmd/gvm
 
       - name: create draft release
         id: create_release
