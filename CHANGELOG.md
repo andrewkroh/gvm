@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Use Go 1.17 to build project.
+- Use Go 1.17 to build project. [#40](https://github.com/andrewkroh/gvm/pull/40)
 
 ## [0.3.0]
 
