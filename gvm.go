@@ -7,12 +7,32 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"sort"
 	"strings"
 
 	"github.com/sirupsen/logrus"
 
 	"github.com/andrewkroh/gvm/common"
 )
+
+type AvailableVersion struct {
+	Version *GoVersion
+	Source  bool // Available to install from source.
+	Binary  bool // Available to download as a binary.
+}
+
+func (av AvailableVersion) String() string {
+	switch {
+	case av.Source && av.Binary:
+		return fmt.Sprintf("%v\t(source, binary)", av.Version)
+	case av.Source:
+		return fmt.Sprintf("%v\t(source)", av.Version)
+	case av.Binary:
+		return fmt.Sprintf("%v\t(binary)", av.Version)
+	default:
+		return av.Version.String()
+	}
+}
 
 type Manager struct {
 	// GVM Home directory. Defaults to $HOME/.gvm
@@ -94,36 +114,58 @@ func (m *Manager) ensureDirStruct() error {
 	return nil
 }
 
-func (m *Manager) Available() ([]*GoVersion, []bool, error) {
+func (m *Manager) Available() ([]AvailableVersion, error) {
 	if !m.hasSrcCache() {
 		versions, err := m.AvailableBinaries()
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 
-		hasBin := make([]bool, len(versions))
-		for i := range hasBin {
-			hasBin[i] = true
+		available := make([]AvailableVersion, 0, len(versions))
+		for _, ver := range versions {
+			available = append(available, AvailableVersion{Version: ver, Binary: true})
 		}
-		return versions, hasBin, nil
+		return available, nil
 	}
 
 	src, err := m.AvailableSource()
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	hasBin := make([]bool, len(src))
+	versionSet := make(map[string]*AvailableVersion, len(src))
+	for _, ver := range src {
+		versionSet[ver.String()] = &AvailableVersion{Version: ver, Source: true}
+	}
+
+	toSlice := func() []AvailableVersion {
+		available := make([]AvailableVersion, 0, len(versionSet))
+		for _, ver := range versionSet {
+			available = append(available, *ver)
+		}
+		sort.Slice(available, func(i, j int) bool {
+			return available[i].Version.LessThan(available[j].Version)
+		})
+		return available
+	}
+
 	bin, err := m.AvailableBinaries()
 	if err != nil {
-		return src, hasBin, nil
+		// Return the source versions if we cannot get binary info.
+		m.Logger.WithError(err).Info("Failed to list available binary versions.")
+		return toSlice(), nil
 	}
 
-	for i, ver := range src {
-		hasBin[i] = findVersion(ver, bin) >= 0
+	// Merge source and binary versions.
+	for _, ver := range bin {
+		if avail, found := versionSet[ver.String()]; found {
+			avail.Binary = true
+			continue
+		}
+		versionSet[ver.String()] = &AvailableVersion{Version: ver, Binary: true}
 	}
 
-	return src, hasBin, nil
+	return toSlice(), nil
 }
 
 func (m *Manager) Remove(version *GoVersion) error {

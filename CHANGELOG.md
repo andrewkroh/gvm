@@ -8,6 +8,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Use Go 1.17 to build project. [#40](https://github.com/andrewkroh/gvm/pull/40)
 
+### Fixed
+
+- Fix staleness issues with the `gvm available` output. [#39](https://github.com/andrewkroh/gvm/issues/39) [#41](https://github.com/andrewkroh/gvm/pull/41)
+
 ## [0.3.0]
 
 ### Added

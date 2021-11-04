@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -220,7 +221,7 @@ func (m *Manager) tryRefreshSrcCache() (bool, error) {
 	}
 
 	// don't refresh cache if still same day
-	if updTS.Day() == now.Day() && updTS.Month() == now.Month() && updTS.Year() == updTS.Year() {
+	if updTS.Day() == now.Day() && updTS.Month() == now.Month() && updTS.Year() == now.Year() {
 		return false, nil
 	}
 
@@ -249,6 +250,12 @@ func (m *Manager) tryRefreshSrcCache() (bool, error) {
 }
 
 func (m *Manager) AvailableSource() ([]*GoVersion, error) {
+	if updates, err := m.tryRefreshSrcCache(); err != nil {
+		return nil, fmt.Errorf("failed to refresh source cache: %w", err)
+	} else if updates {
+		log.Println("Source cache was updated.")
+	}
+
 	localGoSrc := m.srcCacheDir()
 	var versions []*GoVersion
 	err := gitListTags(m.Logger, localGoSrc, func(tag string) {
@@ -309,12 +316,10 @@ func gitLastCommitTs(logger logrus.FieldLogger, path string) (time.Time, error) 
 	}
 
 	i, err := strconv.ParseInt(tsLine, 10, 64)
+	if err != nil {
+		return time.Time{}, err
+	}
 	return time.Unix(i, 0), nil
-}
-
-func gitFetch(logger logrus.FieldLogger, path string) error {
-	logger.Println("git fetch:")
-	return makeCommand("git", "fetch").WithDir(path).WithLogger(logger).Exec()
 }
 
 func gitPull(logger logrus.FieldLogger, path string) error {
