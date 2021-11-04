@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+### Fixed
+
+### Added
+
+## [0.3.1]
+
+### Changed
+
 - Use Go 1.17 to build project. [#40](https://github.com/andrewkroh/gvm/pull/40)
 
 ### Fixed
@@ -104,7 +112,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 Initial release.
 
-[Unreleased]: https://github.com/andrewkroh/gvm/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/andrewkroh/gvm/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/andrewkroh/gvm/releases/tag/v0.3.1
 [0.3.0]: https://github.com/andrewkroh/gvm/releases/tag/v0.3.0
 [0.2.4]: https://github.com/andrewkroh/gvm/releases/tag/v0.2.4
 [0.2.3]: https://github.com/andrewkroh/gvm/releases/tag/v0.2.3
