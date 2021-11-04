@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Use Go 1.17 to build project.
+
 ## [0.3.0]
 
 ### Added
