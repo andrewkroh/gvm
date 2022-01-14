@@ -11,8 +11,8 @@ import (
 
 const usage = `gvm is a Go version manager. gvm installs a Go version and prints
 the commands to configure your environment to use it. gvm can only install
-binary versions of Go from https://golang.org/dl/. Below are examples for
-common shells.
+binary versions of Go from https://storage.googleapis.com/golang. Below are
+examples for common shells.
 
   bash:
     eval "$(gvm 1.17.7)"
@@ -22,6 +22,9 @@ common shells.
 
   powershell:
     gvm --format=powershell 1.17.7 | Invoke-Expression
+
+gvm flags can be set via environment variables by setting GVM_<flag>. For
+example --http-timeout can be set via GVM_HTTP_TIMEOUT=10m.
 `
 
 var (
