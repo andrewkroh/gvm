@@ -15,13 +15,13 @@ binary versions of Go from https://golang.org/dl/. Below are examples for
 common shells.
 
   bash:
-    eval "$(gvm 1.15.5)"
+    eval "$(gvm 1.17.7)"
 
   batch (windows cmd.exe):
-    FOR /f "tokens=*" %i IN ('"gvm.exe" 1.15.5') DO %i
+    FOR /f "tokens=*" %i IN ('"gvm.exe" 1.17.7') DO %i
 
   powershell:
-    gvm --format=powershell 1.15.5 | Invoke-Expression
+    gvm --format=powershell 1.17.7 | Invoke-Expression
 `
 
 var (

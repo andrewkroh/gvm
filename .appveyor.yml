@@ -7,7 +7,7 @@ image: Visual Studio 2015
 environment:
   GOPATH: c:\gopath
   GO111MODULE: on
-  GVM_GO_VERSION: 1.17.2
+  GVM_GO_VERSION: 1.17.7
   GVM_DL: https://github.com/andrewkroh/gvm/releases/download/v0.3.0/gvm-windows-amd64.exe
 
 # Custom clone folder (variables are not expanded here).
