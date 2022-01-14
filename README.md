@@ -18,7 +18,7 @@ powershell:
 
 `gvm --format=powershell 1.17.6 | Invoke-Expression`
 
-gvm flags can be set via environment variables by setting GVM_<flag>. For
+gvm flags can be set via environment variables by setting `GVM_<flag>`. For
 example `--http-timeout` can be set via `GVM_HTTP_TIMEOUT=10m`.
 
 Installation
