@@ -33,7 +33,6 @@ var (
 type commandFactory func(*kingpin.CmdClause) func(*gvm.Manager) error
 
 func main() {
-
 	app := kingpin.New("gvm", usage)
 	debug := app.Flag("debug", "Enable debug logging to stderr.").Short('d').Bool()
 
@@ -53,6 +52,7 @@ func main() {
 	app.Flag("home", "GVM home directory.").StringVar(&manager.Home)
 	app.Flag("url", "Go binaries repository base URL.").StringVar(&manager.GoStorageHome)
 	app.Flag("repository", "Go upstream git repository.").StringVar(&manager.GoSourceURL)
+	app.Flag("http-timeout", "Timeout for HTTP requests.").Default("3m").DurationVar(&manager.HTTPTimeout)
 
 	command(useCommand, "use", "prepare go version and print environment variables").
 		Default()
@@ -84,6 +84,8 @@ func main() {
 		app.Errorf("%v", err)
 		os.Exit(1)
 	}
+
+	logrus.Debug("GVM version: ", version)
 
 	action, exists := commands[selCommand]
 	if !exists {

@@ -10,6 +10,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Add `--http-timeout` flag to control the timeout for HTTP requests. [#43](https://github.com/andrewkroh/gvm/issues/43) [#45](https://github.com/andrewkroh/gvm/pull/45)
+
 ## [0.3.2]
 
 ### Added
