@@ -15,13 +15,13 @@ binary versions of Go from https://storage.googleapis.com/golang. Below are
 examples for common shells.
 
   bash:
-    eval "$(gvm 1.17.7)"
+    eval "$(gvm 1.17.6)"
 
   batch (windows cmd.exe):
-    FOR /f "tokens=*" %i IN ('"gvm.exe" 1.17.7') DO %i
+    FOR /f "tokens=*" %i IN ('"gvm.exe" 1.17.6') DO %i
 
   powershell:
-    gvm --format=powershell 1.17.7 | Invoke-Expression
+    gvm --format=powershell 1.17.6 | Invoke-Expression
 
 gvm flags can be set via environment variables by setting GVM_<flag>. For
 example --http-timeout can be set via GVM_HTTP_TIMEOUT=10m.
