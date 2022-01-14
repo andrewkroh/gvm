@@ -32,7 +32,7 @@ func (m *Manager) installBinary(version *GoVersion) (string, error) {
 	}
 
 	goURL := fmt.Sprintf("%s/go%v.%v-%v.%v", m.GoStorageHome, version, m.GOOS, m.GOARCH, extension)
-	path, err := common.DownloadFile(goURL, tmp)
+	path, err := common.DownloadFile(goURL, tmp, m.HTTPTimeout)
 	if err != nil {
 		return "", fmt.Errorf("failed downloading from %v: %w", goURL, err)
 	}
@@ -44,7 +44,7 @@ func (m *Manager) AvailableBinaries() ([]*GoVersion, error) {
 	home, goos, goarch := m.GoStorageHome, m.GOOS, m.GOARCH
 
 	versions := map[string]struct{}{}
-	err := iterXMLDirListing(home, func(name string) bool {
+	err := m.iterXMLDirListing(home, func(name string) bool {
 		matches := reGostoreVersion.FindStringSubmatch(name)
 		if len(matches) < 4 {
 			return true
@@ -76,9 +76,11 @@ func (m *Manager) AvailableBinaries() ([]*GoVersion, error) {
 	return list, nil
 }
 
-func iterXMLDirListing(home string, fn func(entry string) bool) error {
+func (m *Manager) iterXMLDirListing(home string, fn func(entry string) bool) error {
 	marker := ""
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: m.HTTPTimeout,
+	}
 
 	for {
 		type contents struct {

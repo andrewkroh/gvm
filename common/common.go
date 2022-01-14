@@ -18,13 +18,13 @@ var log = logrus.WithField("package", "common")
 // ErrNotFound is returned when the download fails due to HTTP 404 Not Found.
 var ErrNotFound = errors.New("not found")
 
-func DownloadFile(url, destinationDir string) (string, error) {
+func DownloadFile(url, destinationDir string, httpTimeout time.Duration) (string, error) {
 	log.WithField("url", url).Debug("Downloading file")
 	var name string
 	var err error
 	var retry bool
 	for a := 1; a <= 3; a++ {
-		name, err, retry = downloadFile(url, destinationDir)
+		name, err, retry = downloadFile(url, destinationDir, httpTimeout)
 		if err != nil && retry {
 			log.WithError(err).Debugf("Download attempt %d failed", a)
 			continue
@@ -34,9 +34,9 @@ func DownloadFile(url, destinationDir string) (string, error) {
 	return name, err
 }
 
-func downloadFile(url, destinationDir string) (path string, err error, retryable bool) {
+func downloadFile(url, destinationDir string, httpTimeout time.Duration) (path string, err error, retryable bool) {
 	client := http.Client{
-		Timeout: time.Duration(3 * time.Minute),
+		Timeout: httpTimeout,
 	}
 	resp, err := client.Get(url)
 	if err != nil {

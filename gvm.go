@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/sirupsen/logrus"
 
@@ -53,6 +54,8 @@ type Manager struct {
 	// Defaults to https://go.googlesource.com/go
 	GoSourceURL string
 
+	HTTPTimeout time.Duration
+
 	Logger logrus.FieldLogger
 
 	cacheDir    string
@@ -76,6 +79,10 @@ func (m *Manager) Init() error {
 
 	if m.GoSourceURL == "" {
 		m.GoSourceURL = "https://go.googlesource.com/go"
+	}
+
+	if m.HTTPTimeout == 0 {
+		m.HTTPTimeout = 3 * time.Minute
 	}
 
 	if m.GOOS == "" {
