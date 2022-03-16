@@ -8,7 +8,7 @@ import (
 	"github.com/andrewkroh/gvm"
 )
 
-func purgeCommand(cmd *kingpin.CmdClause) func(*gvm.Manager) error {
+func purgeCommand(_ *kingpin.CmdClause) func(*gvm.Manager) error {
 	return func(manager *gvm.Manager) error {
 		versions, err := manager.Installed()
 		if err != nil {

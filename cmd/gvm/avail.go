@@ -8,7 +8,7 @@ import (
 	"github.com/andrewkroh/gvm"
 )
 
-func availCommand(cmd *kingpin.CmdClause) func(*gvm.Manager) error {
+func availCommand(_ *kingpin.CmdClause) func(*gvm.Manager) error {
 	return func(manager *gvm.Manager) error {
 		list, err := manager.Available()
 		if err != nil {
