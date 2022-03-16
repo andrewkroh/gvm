@@ -210,7 +210,7 @@ func (m *Manager) tryRefreshSrcCache() (bool, error) {
 	}
 
 	info := srcCacheInfo{}
-	if err := readJsonFile(filepath.Join(m.cacheDir, "go.meta"), &info); err != nil {
+	if err := readJSONFile(filepath.Join(m.cacheDir, "go.meta"), &info); err != nil {
 		return false, err
 	}
 

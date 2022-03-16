@@ -64,7 +64,7 @@ func writeJSONFile(filename string, value interface{}) error {
 	return ioutil.WriteFile(filename, contents, 0o644)
 }
 
-func readJsonFile(filename string, to interface{}) error {
+func readJSONFile(filename string, to interface{}) error {
 	contents, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return err
