@@ -94,26 +94,26 @@ func (*bashFormatter) Append(name, val string) string {
 	return fmt.Sprintf(`export %v="$%v:%v"`, name, name, val)
 }
 
-func (f *batchFormatter) Set(name, val string) string {
+func (*batchFormatter) Set(name, val string) string {
 	return fmt.Sprintf(`set %v=%v`, name, val)
 }
 
-func (f *batchFormatter) Prepend(name, val string) string {
+func (*batchFormatter) Prepend(name, val string) string {
 	return fmt.Sprintf(`set %v=%v;%v`, name, val, os.Getenv(name))
 }
 
-func (f *batchFormatter) Append(name, val string) string {
+func (*batchFormatter) Append(name, val string) string {
 	return fmt.Sprintf(`set %v=%v;%v`, name, os.Getenv(name), val)
 }
 
-func (f *powershellFormatter) Set(name, val string) string {
+func (*powershellFormatter) Set(name, val string) string {
 	return fmt.Sprintf(`$env:%v = "%v"`, name, val)
 }
 
-func (f *powershellFormatter) Prepend(name, val string) string {
+func (*powershellFormatter) Prepend(name, val string) string {
 	return fmt.Sprintf(`$env:%v = "%v;$env:%v"`, name, val, name)
 }
 
-func (f *powershellFormatter) Append(name, val string) string {
+func (*powershellFormatter) Append(name, val string) string {
 	return fmt.Sprintf(`$env:%v="$env:%v;%v"`, name, name, val)
 }
