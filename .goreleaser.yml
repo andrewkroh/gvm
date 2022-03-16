@@ -1,0 +1,48 @@
+---
+
+builds:
+  - main: ./cmd/gvm
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    flags:
+      - -trimpath
+    ldflags:
+      - '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}'
+
+universal_binaries:
+  - replace: false
+
+archives:
+  - format: binary
+    name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
+
+checksum:
+  name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
+  algorithm: sha256
+
+release:
+  draft: true
+  prerelease: auto
+  mode: append
+
+changelog:
+  groups:
+    - title: Added
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 0
+    - title: Fixed
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 1
+    - title: Other
+      order: 999

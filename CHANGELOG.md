@@ -8,7 +8,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed builds under Go 1.18. [#46](https://github.com/andrewkroh/gvm/issues/46) [#47](https://github.com/andrewkroh/gvm/pull/47)
+- Fixed several issues identified by golangci-lint. [#48](https://github.com/andrewkroh/gvm/pull/48)
+
 ### Added
+
+- Added macos universal build and switched to goreleaser for release builds.
 
 ## [0.4.0]
 
