@@ -231,7 +231,7 @@ func (m *Manager) tryRefreshSrcCache() (bool, error) {
 	}
 
 	// check for updates ;)
-	cTS, err := gitLastCommitTs(log, m.srcCacheDir())
+	cTS, err := gitLastCommitTimestamp(log, m.srcCacheDir())
 	if err != nil {
 		return false, err
 	}
@@ -303,7 +303,7 @@ func gitClone(logger logrus.FieldLogger, to, url string, bare bool) error {
 	return common.Rename(tmpDir, to)
 }
 
-func gitLastCommitTs(logger logrus.FieldLogger, path string) (time.Time, error) {
+func gitLastCommitTimestamp(logger logrus.FieldLogger, path string) (time.Time, error) {
 	var tsLine string
 
 	logger.Println("git log:")
