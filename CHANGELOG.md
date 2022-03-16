@@ -8,6 +8,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+### Added
+
+## [0.4.1]
+
+### Fixed
+
 - Fixed builds under Go 1.18. [#46](https://github.com/andrewkroh/gvm/issues/46) [#47](https://github.com/andrewkroh/gvm/pull/47)
 - Fixed several issues identified by golangci-lint. [#48](https://github.com/andrewkroh/gvm/pull/48)
 
@@ -129,7 +135,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 Initial release.
 
-[Unreleased]: https://github.com/andrewkroh/gvm/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/andrewkroh/gvm/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/andrewkroh/gvm/releases/tag/v0.4.1
 [0.4.0]: https://github.com/andrewkroh/gvm/releases/tag/v0.4.0
 [0.3.2]: https://github.com/andrewkroh/gvm/releases/tag/v0.3.2
 [0.3.1]: https://github.com/andrewkroh/gvm/releases/tag/v0.3.1
