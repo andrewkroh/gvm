@@ -2,12 +2,11 @@ package gvm
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
-
-	"github.com/pkg/errors"
 
 	"github.com/andrewkroh/gvm/common"
 )
@@ -21,7 +20,7 @@ func homeDir() (string, error) {
 	}
 
 	if _, err := os.Stat(homeDir); err != nil {
-		return "", errors.Wrap(err, "failed to access home dir")
+		return "", fmt.Errorf("failed to access home dir: %w", err)
 	}
 
 	return homeDir, nil

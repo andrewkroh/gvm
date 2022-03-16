@@ -5,8 +5,6 @@ import (
 	"io"
 	"os"
 	"runtime"
-
-	"github.com/pkg/errors"
 )
 
 type Fmt struct {
@@ -80,7 +78,7 @@ func GetEnvFormatter(format string) (EnvFormatter, error) {
 		return _powershellFormatter, nil
 	default:
 
-		return nil, errors.Errorf("invalid format option '%v'", format)
+		return nil, fmt.Errorf("invalid format option: %q", format)
 	}
 }
 

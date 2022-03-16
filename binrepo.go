@@ -9,8 +9,6 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/pkg/errors"
-
 	"github.com/andrewkroh/gvm/common"
 )
 
@@ -110,7 +108,7 @@ func (m *Manager) iterXMLDirListing(home string, fn func(entry string) bool) err
 		defer body.Close()
 
 		if resp.StatusCode != http.StatusOK {
-			return errors.Errorf("listing failed with http status %v", resp.StatusCode)
+			return fmt.Errorf("listing failed with http status %v", resp.StatusCode)
 		}
 
 		dec := xml.NewDecoder(body)

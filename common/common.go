@@ -1,6 +1,7 @@
 package common
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -9,7 +10,6 @@ import (
 	"time"
 
 	"github.com/otiai10/copy"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -40,7 +40,7 @@ func downloadFile(url, destinationDir string, httpTimeout time.Duration) (path s
 	}
 	resp, err := client.Get(url)
 	if err != nil {
-		return "", errors.Wrap(err, "http get failed"), true
+		return "", fmt.Errorf("http get failed: %w", err), true
 	}
 	defer resp.Body.Close()
 
@@ -48,18 +48,18 @@ func downloadFile(url, destinationDir string, httpTimeout time.Duration) (path s
 		if resp.StatusCode == http.StatusNotFound {
 			return "", ErrNotFound, false
 		}
-		return "", errors.Errorf("download failed with http status %v", resp.StatusCode), true
+		return "", fmt.Errorf("download failed with http status %v: %w", resp.StatusCode, err), true
 	}
 
 	name := filepath.Join(destinationDir, filepath.Base(url))
 	f, err := os.Create(name)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to create output file"), false
+		return "", fmt.Errorf("failed to create output file: %w", err), false
 	}
 
 	numBytes, err := io.Copy(f, resp.Body)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to write file to disk"), true
+		return "", fmt.Errorf("failed to write file to disk: %w", err), true
 	}
 	log.WithFields(logrus.Fields{"file": name, "size_bytes": numBytes}).Debug("Download complete")
 
