@@ -260,8 +260,7 @@ func (m *Manager) Install(version *GoVersion) (string, error) {
 		return m.VersionGoROOT(version), nil
 	}
 
-	tryBinary := !version.IsTip()
-	if tryBinary {
+	if tryBinary := !version.IsTip(); tryBinary {
 		dir, err := m.installBinary(version)
 		if err == nil {
 			return dir, nil
