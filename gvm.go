@@ -114,7 +114,7 @@ func (m *Manager) UpdateCache() error {
 
 func (m *Manager) ensureDirStruct() error {
 	for _, dir := range []string{m.cacheDir, m.versionsDir, m.logsDir} {
-		if err := os.MkdirAll(dir, os.ModeDir|0755); err != nil {
+		if err := os.MkdirAll(dir, os.ModeDir|0o755); err != nil {
 			return err
 		}
 	}

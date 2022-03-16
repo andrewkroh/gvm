@@ -13,9 +13,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-var (
-	reGostoreVersion = regexp.MustCompile(`go(.*)\.(.*)-(.*)\..*`)
-)
+var reGostoreVersion = regexp.MustCompile(`go(.*)\.(.*)-(.*)\..*`)
 
 func (m *Manager) installBinary(version *GoVersion) (string, error) {
 	godir := m.versionDir(version)
@@ -87,7 +85,7 @@ func (m *Manager) iterXMLDirListing(home string, fn func(entry string) bool) err
 			Key string
 		}
 
-		var listing = struct {
+		listing := struct {
 			IsTruncated bool
 			NextMarker  string
 			Contents    []contents

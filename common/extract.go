@@ -29,7 +29,7 @@ func unzip(sourceFile, destinationDir string) error {
 	}
 	defer r.Close()
 
-	if err = os.MkdirAll(destinationDir, 0755); err != nil {
+	if err = os.MkdirAll(destinationDir, 0o755); err != nil {
 		return fmt.Errorf("failed to mkdir %v: %w", destinationDir, err)
 	}
 

@@ -138,7 +138,7 @@ func buildGo(log logrus.FieldLogger, buildDir, repo, version, tag string) error 
 	if version != "tip" {
 		// write VERSION file
 		versionFile := filepath.Join(tmp, "VERSION")
-		err := ioutil.WriteFile(versionFile, []byte(version), 0644)
+		err := ioutil.WriteFile(versionFile, []byte(version), 0o644)
 		if err != nil {
 			return err
 		}
@@ -270,7 +270,6 @@ func (m *Manager) AvailableSource() ([]*GoVersion, error) {
 
 		versions = append(versions, ver)
 	})
-
 	if err != nil {
 		return nil, err
 	}
@@ -281,9 +280,9 @@ func (m *Manager) AvailableSource() ([]*GoVersion, error) {
 	return versions, err
 }
 
-func gitClone(logger logrus.FieldLogger, to string, url string, bare bool) error {
+func gitClone(logger logrus.FieldLogger, to, url string, bare bool) error {
 	tmpDir := to + ".tmp"
-	if err := os.Mkdir(tmpDir, 0755); err != nil {
+	if err := os.Mkdir(tmpDir, 0o755); err != nil {
 		return err
 	}
 	defer os.RemoveAll(tmpDir)

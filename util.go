@@ -29,7 +29,7 @@ func homeDir() (string, error) {
 
 func extractTo(to, file string) (string, error) {
 	tmpDir := to + ".tmp"
-	if err := os.Mkdir(tmpDir, 0755); err != nil {
+	if err := os.Mkdir(tmpDir, 0o755); err != nil {
 		return "", err
 	}
 	defer os.RemoveAll(tmpDir)
@@ -62,7 +62,7 @@ func writeJsonFile(filename string, value interface{}) error {
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(filename, contents, 0644)
+	return ioutil.WriteFile(filename, contents, 0o644)
 }
 
 func readJsonFile(filename string, to interface{}) error {

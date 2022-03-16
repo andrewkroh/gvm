@@ -15,7 +15,7 @@ import (
 )
 
 func TestGVMRunUse(t *testing.T) {
-	var cases = []struct {
+	cases := []struct {
 		Version string
 		Format  string
 		Cmds    []string
@@ -30,7 +30,6 @@ func TestGVMRunUse(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(fmt.Sprintf("%v_%v", tc.Version, tc.Format), func(t *testing.T) {
-
 			output, err := withStdout(func() {
 				manager := &gvm.Manager{}
 				if err := manager.Init(); err != nil {
@@ -78,7 +77,6 @@ func TestGVMRunUse(t *testing.T) {
 			assert.Contains(t, string(version), tc.Version)
 		})
 	}
-
 }
 
 // capture stdout and return captured string
