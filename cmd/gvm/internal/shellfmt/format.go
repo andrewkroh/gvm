@@ -82,15 +82,15 @@ func GetEnvFormatter(format string) (EnvFormatter, error) {
 	}
 }
 
-func (f *bashFormatter) Set(name, val string) string {
+func (*bashFormatter) Set(name, val string) string {
 	return fmt.Sprintf(`export %v="%v"`, name, val)
 }
 
-func (f *bashFormatter) Prepend(name, val string) string {
+func (*bashFormatter) Prepend(name, val string) string {
 	return fmt.Sprintf(`export %v="%v:$%v"`, name, val, name)
 }
 
-func (f *bashFormatter) Append(name, val string) string {
+func (*bashFormatter) Append(name, val string) string {
 	return fmt.Sprintf(`export %v="$%v:%v"`, name, name, val)
 }
 
