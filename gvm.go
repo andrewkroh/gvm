@@ -199,7 +199,7 @@ func (m *Manager) Installed() ([]*GoVersion, error) {
 
 	versionSuffix := fmt.Sprintf(".%v.%v", m.GOOS, m.GOARCH)
 
-	var list []*GoVersion
+	list := make([]*GoVersion, 0, len(files))
 	for _, fi := range files {
 		name := fi.Name()
 		name = strings.TrimSuffix(name, versionSuffix)
