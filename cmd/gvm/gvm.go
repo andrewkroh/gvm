@@ -4,9 +4,10 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/andrewkroh/gvm"
 	"github.com/sirupsen/logrus"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
+
+	"github.com/andrewkroh/gvm"
 )
 
 const usage = `gvm is a Go version manager. gvm installs a Go version and prints

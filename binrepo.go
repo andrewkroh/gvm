@@ -9,8 +9,9 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/andrewkroh/gvm/common"
 	"github.com/pkg/errors"
+
+	"github.com/andrewkroh/gvm/common"
 )
 
 var reGostoreVersion = regexp.MustCompile(`go(.*)\.(.*)-(.*)\..*`)

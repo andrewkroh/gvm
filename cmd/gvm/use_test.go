@@ -10,8 +10,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/andrewkroh/gvm"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/andrewkroh/gvm"
 )
 
 func TestGVMRunUse(t *testing.T) {

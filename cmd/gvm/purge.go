@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/andrewkroh/gvm"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
+
+	"github.com/andrewkroh/gvm"
 )
 
 func purgeCommand(cmd *kingpin.CmdClause) func(*gvm.Manager) error {
