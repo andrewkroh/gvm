@@ -8,7 +8,7 @@ import (
 	"github.com/andrewkroh/gvm"
 )
 
-func listCommand(cmd *kingpin.CmdClause) func(*gvm.Manager) error {
+func listCommand(_ *kingpin.CmdClause) func(*gvm.Manager) error {
 	return func(manager *gvm.Manager) error {
 		versions, err := manager.Installed()
 		if err != nil {
