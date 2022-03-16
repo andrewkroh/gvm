@@ -60,7 +60,7 @@ func (m *Manager) updateSrcCache() error {
 		return err
 	}
 
-	return writeJsonFile(filepath.Join(m.cacheDir, "go.meta"), srcCacheInfo{
+	return writeJSONFile(filepath.Join(m.cacheDir, "go.meta"), srcCacheInfo{
 		Updated: time.Now(),
 	})
 }
@@ -138,7 +138,7 @@ func buildGo(log logrus.FieldLogger, buildDir, repo, version, tag string) error 
 	if version != "tip" {
 		// write VERSION file
 		versionFile := filepath.Join(tmp, "VERSION")
-		err := ioutil.WriteFile(versionFile, []byte(version), 0644)
+		err := ioutil.WriteFile(versionFile, []byte(version), 0o644)
 		if err != nil {
 			return err
 		}
@@ -210,7 +210,7 @@ func (m *Manager) tryRefreshSrcCache() (bool, error) {
 	}
 
 	info := srcCacheInfo{}
-	if err := readJsonFile(filepath.Join(m.cacheDir, "go.meta"), &info); err != nil {
+	if err := readJSONFile(filepath.Join(m.cacheDir, "go.meta"), &info); err != nil {
 		return false, err
 	}
 
@@ -231,7 +231,7 @@ func (m *Manager) tryRefreshSrcCache() (bool, error) {
 	}
 
 	// check for updates ;)
-	cTS, err := gitLastCommitTs(log, m.srcCacheDir())
+	cTS, err := gitLastCommitTimestamp(log, m.srcCacheDir())
 	if err != nil {
 		return false, err
 	}
@@ -270,7 +270,6 @@ func (m *Manager) AvailableSource() ([]*GoVersion, error) {
 
 		versions = append(versions, ver)
 	})
-
 	if err != nil {
 		return nil, err
 	}
@@ -281,9 +280,9 @@ func (m *Manager) AvailableSource() ([]*GoVersion, error) {
 	return versions, err
 }
 
-func gitClone(logger logrus.FieldLogger, to string, url string, bare bool) error {
+func gitClone(logger logrus.FieldLogger, to, url string, bare bool) error {
 	tmpDir := to + ".tmp"
-	if err := os.Mkdir(tmpDir, 0755); err != nil {
+	if err := os.Mkdir(tmpDir, 0o755); err != nil {
 		return err
 	}
 	defer os.RemoveAll(tmpDir)
@@ -304,7 +303,7 @@ func gitClone(logger logrus.FieldLogger, to string, url string, bare bool) error
 	return common.Rename(tmpDir, to)
 }
 
-func gitLastCommitTs(logger logrus.FieldLogger, path string) (time.Time, error) {
+func gitLastCommitTimestamp(logger logrus.FieldLogger, path string) (time.Time, error) {
 	var tsLine string
 
 	logger.Println("git log:")

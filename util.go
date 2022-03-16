@@ -2,12 +2,11 @@ package gvm
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
-
-	"github.com/pkg/errors"
 
 	"github.com/andrewkroh/gvm/common"
 )
@@ -21,7 +20,7 @@ func homeDir() (string, error) {
 	}
 
 	if _, err := os.Stat(homeDir); err != nil {
-		return "", errors.Wrap(err, "failed to access home dir")
+		return "", fmt.Errorf("failed to access home dir: %w", err)
 	}
 
 	return homeDir, nil
@@ -29,7 +28,7 @@ func homeDir() (string, error) {
 
 func extractTo(to, file string) (string, error) {
 	tmpDir := to + ".tmp"
-	if err := os.Mkdir(tmpDir, 0755); err != nil {
+	if err := os.Mkdir(tmpDir, 0o755); err != nil {
 		return "", err
 	}
 	defer os.RemoveAll(tmpDir)
@@ -57,15 +56,15 @@ func existsDir(dir string) (bool, error) {
 	return false, err
 }
 
-func writeJsonFile(filename string, value interface{}) error {
+func writeJSONFile(filename string, value interface{}) error {
 	contents, err := json.Marshal(value)
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(filename, contents, 0644)
+	return ioutil.WriteFile(filename, contents, 0o644)
 }
 
-func readJsonFile(filename string, to interface{}) error {
+func readJSONFile(filename string, to interface{}) error {
 	contents, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return err

@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"archive/zip"
 	"compress/gzip"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -29,7 +30,7 @@ func unzip(sourceFile, destinationDir string) error {
 	}
 	defer r.Close()
 
-	if err = os.MkdirAll(destinationDir, 0755); err != nil {
+	if err = os.MkdirAll(destinationDir, 0o755); err != nil {
 		return fmt.Errorf("failed to mkdir %v: %w", destinationDir, err)
 	}
 
@@ -95,7 +96,7 @@ func untar(sourceFile, destinationDir string) error {
 	for {
 		header, err := tarBallReader.Next()
 		if err != nil {
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				break
 			}
 			return err

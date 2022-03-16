@@ -114,7 +114,7 @@ func (m *Manager) UpdateCache() error {
 
 func (m *Manager) ensureDirStruct() error {
 	for _, dir := range []string{m.cacheDir, m.versionsDir, m.logsDir} {
-		if err := os.MkdirAll(dir, os.ModeDir|0755); err != nil {
+		if err := os.MkdirAll(dir, os.ModeDir|0o755); err != nil {
 			return err
 		}
 	}
@@ -180,11 +180,11 @@ func (m *Manager) Remove(version *GoVersion) error {
 
 	fi, err := os.Stat(dir)
 	if os.IsNotExist(err) {
-		return fmt.Errorf("Version %v not installed\n", version)
+		return fmt.Errorf("version %q not installed", version)
 	}
 
 	if !fi.IsDir() {
-		return fmt.Errorf("Path %v is no directory", dir)
+		return fmt.Errorf("path %q is not a directory", dir)
 	}
 
 	return os.RemoveAll(dir)
@@ -199,7 +199,7 @@ func (m *Manager) Installed() ([]*GoVersion, error) {
 
 	versionSuffix := fmt.Sprintf(".%v.%v", m.GOOS, m.GOARCH)
 
-	var list []*GoVersion
+	list := make([]*GoVersion, 0, len(files))
 	for _, fi := range files {
 		name := fi.Name()
 		name = strings.TrimSuffix(name, versionSuffix)
@@ -260,8 +260,7 @@ func (m *Manager) Install(version *GoVersion) (string, error) {
 		return m.VersionGoROOT(version), nil
 	}
 
-	tryBinary := !version.IsTip()
-	if tryBinary {
+	if tryBinary := !version.IsTip(); tryBinary {
 		dir, err := m.installBinary(version)
 		if err == nil {
 			return dir, nil

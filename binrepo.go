@@ -10,12 +10,9 @@ import (
 	"regexp"
 
 	"github.com/andrewkroh/gvm/common"
-	"github.com/pkg/errors"
 )
 
-var (
-	reGostoreVersion = regexp.MustCompile(`go(.*)\.(.*)-(.*)\..*`)
-)
+var reGostoreVersion = regexp.MustCompile(`go(.*)\.(.*)-(.*)\..*`)
 
 func (m *Manager) installBinary(version *GoVersion) (string, error) {
 	godir := m.versionDir(version)
@@ -87,7 +84,7 @@ func (m *Manager) iterXMLDirListing(home string, fn func(entry string) bool) err
 			Key string
 		}
 
-		var listing = struct {
+		listing := struct {
 			IsTruncated bool
 			NextMarker  string
 			Contents    []contents
@@ -107,17 +104,17 @@ func (m *Manager) iterXMLDirListing(home string, fn func(entry string) bool) err
 			return err
 		}
 
-		body := resp.Body
-		defer body.Close()
-
 		if resp.StatusCode != http.StatusOK {
-			return errors.Errorf("listing failed with http status %v", resp.StatusCode)
+			resp.Body.Close()
+			return fmt.Errorf("listing failed with http status %v", resp.StatusCode)
 		}
 
-		dec := xml.NewDecoder(body)
+		dec := xml.NewDecoder(resp.Body)
 		if err := dec.Decode(&listing); err != nil {
+			resp.Body.Close()
 			return err
 		}
+		resp.Body.Close()
 
 		for i := range listing.Contents {
 			cont := fn(listing.Contents[i].Key)
