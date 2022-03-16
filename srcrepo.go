@@ -60,7 +60,7 @@ func (m *Manager) updateSrcCache() error {
 		return err
 	}
 
-	return writeJsonFile(filepath.Join(m.cacheDir, "go.meta"), srcCacheInfo{
+	return writeJSONFile(filepath.Join(m.cacheDir, "go.meta"), srcCacheInfo{
 		Updated: time.Now(),
 	})
 }

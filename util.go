@@ -56,7 +56,7 @@ func existsDir(dir string) (bool, error) {
 	return false, err
 }
 
-func writeJsonFile(filename string, value interface{}) error {
+func writeJSONFile(filename string, value interface{}) error {
 	contents, err := json.Marshal(value)
 	if err != nil {
 		return err
