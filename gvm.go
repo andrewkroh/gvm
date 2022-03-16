@@ -180,11 +180,11 @@ func (m *Manager) Remove(version *GoVersion) error {
 
 	fi, err := os.Stat(dir)
 	if os.IsNotExist(err) {
-		return fmt.Errorf("Version %v not installed\n", version)
+		return fmt.Errorf("version %q not installed", version)
 	}
 
 	if !fi.IsDir() {
-		return fmt.Errorf("Path %v is no directory", dir)
+		return fmt.Errorf("path %q is not a directory", dir)
 	}
 
 	return os.RemoveAll(dir)
