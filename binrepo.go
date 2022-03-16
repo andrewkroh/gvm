@@ -104,17 +104,17 @@ func (m *Manager) iterXMLDirListing(home string, fn func(entry string) bool) err
 			return err
 		}
 
-		body := resp.Body
-		defer body.Close()
-
 		if resp.StatusCode != http.StatusOK {
+			resp.Body.Close()
 			return fmt.Errorf("listing failed with http status %v", resp.StatusCode)
 		}
 
-		dec := xml.NewDecoder(body)
+		dec := xml.NewDecoder(resp.Body)
 		if err := dec.Decode(&listing); err != nil {
+			resp.Body.Close()
 			return err
 		}
+		resp.Body.Close()
 
 		for i := range listing.Contents {
 			cont := fn(listing.Contents[i].Key)
