@@ -37,18 +37,10 @@ jobs:
       - name: go test
         run: go test ./...
 
-      - name: install gox
-        env:
-          GO111MODULE: off
-        run: go get github.com/mitchellh/gox
-
-      - name: cross build
-        shell: bash
-        run: |
-          export PATH=$PATH:$(go env GOPATH)/bin
-          mkdir -p build/bin
-          gox -ldflags '-X main.version=${{ github.sha }}' \
-              -output='build/bin/{{.Dir}}-{{.OS}}-{{.Arch}}' \
-              -os='windows linux darwin freebsd' \
-              -arch='amd64 386 arm arm64' \
-              -osarch='!darwin/386 !darwin/arm !darwin/arm64' ./cmd/gvm
+      -
+        name: cross build with goreleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: build --rm-dist --snapshot

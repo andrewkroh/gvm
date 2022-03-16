@@ -4,4 +4,4 @@
 
 **/gvm
 !**/gvm/
-build/
+dist/
