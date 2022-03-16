@@ -45,7 +45,7 @@ func installCommand(cmd *kingpin.CmdClause) func(*gvm.Manager) error {
 			return err
 		}
 
-		fmt.Printf("Sucessfully installed go-%v to %v\n", version, dir)
+		fmt.Printf("Successfully installed go-%v to %v\n", version, dir)
 		return nil
 	}
 }
