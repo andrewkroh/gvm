@@ -24,7 +24,7 @@ func DownloadFile(url, destinationDir string, httpTimeout time.Duration) (string
 	var err error
 	var retry bool
 	for a := 1; a <= 3; a++ {
-		name, err, retry = downloadFile(url, destinationDir, httpTimeout)
+		name, retry, err = downloadFile(url, destinationDir, httpTimeout)
 		if err != nil && retry {
 			log.WithError(err).Debugf("Download attempt %d failed", a)
 			continue
@@ -34,36 +34,36 @@ func DownloadFile(url, destinationDir string, httpTimeout time.Duration) (string
 	return name, err
 }
 
-func downloadFile(url, destinationDir string, httpTimeout time.Duration) (path string, err error, retryable bool) {
+func downloadFile(url, destinationDir string, httpTimeout time.Duration) (path string, retryable bool, err error) {
 	client := http.Client{
 		Timeout: httpTimeout,
 	}
 	resp, err := client.Get(url)
 	if err != nil {
-		return "", fmt.Errorf("http get failed: %w", err), true
+		return "", true, fmt.Errorf("http get failed: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		if resp.StatusCode == http.StatusNotFound {
-			return "", ErrNotFound, false
+			return "", false, ErrNotFound
 		}
-		return "", fmt.Errorf("download failed with http status %v: %w", resp.StatusCode, err), true
+		return "", true, fmt.Errorf("download failed with http status %v: %w", resp.StatusCode, err)
 	}
 
 	name := filepath.Join(destinationDir, filepath.Base(url))
 	f, err := os.Create(name)
 	if err != nil {
-		return "", fmt.Errorf("failed to create output file: %w", err), false
+		return "", false, fmt.Errorf("failed to create output file: %w", err)
 	}
 
 	numBytes, err := io.Copy(f, resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("failed to write file to disk: %w", err), true
+		return "", true, fmt.Errorf("failed to write file to disk: %w", err)
 	}
 	log.WithFields(logrus.Fields{"file": name, "size_bytes": numBytes}).Debug("Download complete")
 
-	return name, nil, false
+	return name, false, nil
 }
 
 // Rename renames src to dest. If the rename operation fails it will attempt to
