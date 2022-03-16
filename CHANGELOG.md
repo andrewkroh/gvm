@@ -13,7 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added macos universal build and switched to goreleaser for release builds.
+- Added macos universal build and switched to goreleaser for release builds. [#50](https://github.com/andrewkroh/gvm/pull/50)
 
 ## [0.4.0]
 
