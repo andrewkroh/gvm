@@ -1,0 +1,85 @@
+---
+
+run:
+  issues-exit-code: 1
+  modules-download-mode: readonly
+
+linters:
+  disable-all: true
+  enable:
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unused
+    - varcheck
+    - depguard
+    - errorlint
+    - gofumpt
+    - goimports
+    - godox
+    - ifshort
+    - misspell
+    - prealloc
+    - unconvert
+    - revive
+  fast: false
+
+linters-settings:
+  goimports:
+    local-prefixes: github.com/andrewkroh/gvm
+  gofumpt:
+    extra-rules: true
+  revive:
+    enable-all-rules: false
+    # https://github.com/mgechev/revive/blob/master/RULES_DESCRIPTIONS.md
+    rules:
+      - name: bare-return
+      - name: call-to-gc
+      - name: confusing-results
+      - name: constant-logical-expr
+      - name: context-as-argument
+      - name: deep-exit
+      - name: defer
+      - name: duplicated-imports
+      - name: early-return
+      - name: empty-block
+      - name: error-strings
+      - name: errorf
+      - name: exported
+        arguments:
+          - checkPrivateReceivers
+      - name: imports-blacklist
+        arguments:
+          - github.com/pkg/errors
+      - name: increment-decrement
+      - name: range
+      - name: range-val-address
+      - name: range-val-in-closure
+      - name: receiver-naming
+      - name: struct-tag
+      - name: time-naming
+      - name: unconditional-recursion
+      - name: unexported-naming
+      - name: unexported-return
+      - name: unnecessary-stmt
+      - name: unreachable-code
+      - name: unused-parameter
+      - name: unused-receiver
+      - name: var-declaration
+      - name: waitgroup-by-value
+  stylecheck:
+    checks:
+      - all
+
+issues:
+  include:
+    # If you're going to write a comment follow the conventions.
+    # https://go.dev/doc/effective_go#commentary.
+    # comment on exported (.+) should be of the form "(.+)..."
+    - EXC0014

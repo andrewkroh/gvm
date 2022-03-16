@@ -3,22 +3,10 @@ name: Build Go
 on:
   push:
     branches:
-      - master
       - main
-    paths:
-      - '**.go'
-      - 'go.mod'
-      - 'go.sum'
-      - '.github/workflows/go.yml'
   pull_request:
     branches:
-      - master
       - main
-    paths:
-      - '**.go'
-      - 'go.mod'
-      - 'go.sum'
-      - '.github/workflows/go.yml'
 
 jobs:
   test:
