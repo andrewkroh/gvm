@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Updated releases to use Go 1.18. [#54](https://github.com/andrewkroh/gvm/pull/54)
+
 ### Fixed
 
 - Fix `--arch` flag and associated `GVM_ARCH` env variable. [#53](https://github.com/andrewkroh/gvm/pull/53)

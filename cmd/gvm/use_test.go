@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -71,9 +72,17 @@ func TestGVMRunUse(t *testing.T) {
 			}
 
 			// Test that GOROOT/bin/go exists and is the correct version.
-			version, err := exec.Command(filepath.Join(goroot, "bin", "go"), "version").Output()
+			goVersionCmd := exec.Command(filepath.Join(goroot, "bin", "go"), "version")
+			goVersionCmd.Env = append(goVersionCmd.Env, "GOROOT="+goroot)
+
+			version, err := goVersionCmd.Output()
 			if err != nil {
-				t.Fatal("failed to run go version", err)
+				var exitErr *exec.ExitError
+				if errors.As(err, &exitErr) {
+					t.Fatalf("failed to run go version: %v\n%s", err, exitErr.Stderr)
+				} else {
+					t.Fatal("failed to run go version", err)
+				}
 			}
 			assert.Contains(t, string(version), tc.Version)
 		})
