@@ -72,7 +72,10 @@ func TestGVMRunUse(t *testing.T) {
 			}
 
 			// Test that GOROOT/bin/go exists and is the correct version.
-			version, err := exec.Command(filepath.Join(goroot, "bin", "go"), "version").Output()
+			goVersionCmd := exec.Command(filepath.Join(goroot, "bin", "go"), "version")
+			goVersionCmd.Env = append(goVersionCmd.Env, "GOROOT="+goroot)
+
+			version, err := goVersionCmd.Output()
 			if err != nil {
 				var exitErr *exec.ExitError
 				if errors.As(err, &exitErr) {
