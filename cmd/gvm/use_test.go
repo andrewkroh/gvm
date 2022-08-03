@@ -21,6 +21,7 @@ import (
 var (
 	go1_6  = gvm.MustParseVersion("1.6")
 	go1_9  = gvm.MustParseVersion("1.9")
+	go1_11 = gvm.MustParseVersion("1.11")
 	go1_16 = gvm.MustParseVersion("1.16")
 )
 
@@ -62,6 +63,10 @@ func TestGVMRunUse(t *testing.T) {
 			// by only testing on platforms where Go 1.5 is available as a binary.
 			if ver.LessThan(go1_6) && runtime.GOARCH != "amd64" {
 				t.Skip("Binary distributions of Go 1.5 are not available.")
+			}
+
+			if tc.FromSource && runtime.GOOS == "darwin" && ver.LessThan(go1_11) {
+				t.Skip("Go 1.10 fails on MacOS 12. https://github.com/golang/go/wiki/MacOS12BSDThreadRegisterIssue")
 			}
 
 			output, err := withStdout(func() {
