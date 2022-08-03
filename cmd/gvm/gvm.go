@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"runtime"
+	"runtime/debug"
 
 	"github.com/sirupsen/logrus"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
@@ -17,23 +18,38 @@ binary versions of Go from https://storage.googleapis.com/golang. Below are
 examples for common shells.
 
   bash:
-    eval "$(gvm 1.17.6)"
+    eval "$(gvm 1.18.5)"
 
   batch (windows cmd.exe):
-    FOR /f "tokens=*" %i IN ('"gvm.exe" 1.17.6') DO %i
+    FOR /f "tokens=*" %i IN ('"gvm.exe" 1.18.5') DO %i
 
   powershell:
-    gvm --format=powershell 1.17.6 | Invoke-Expression
+    gvm --format=powershell 1.18.5 | Invoke-Expression
 
 gvm flags can be set via environment variables by setting GVM_<flag>. For
 example --http-timeout can be set via GVM_HTTP_TIMEOUT=10m.
 `
 
-var (
-	version = "SNAPSHOT"
+var log = logrus.WithField("package", "main")
 
-	log = logrus.WithField("package", "main")
+// Build info.
+var (
+	version string
+	commit  string
 )
+
+func init() {
+	if version == "" && commit == "" {
+		// Fall back to Go module data when not built with goreleaser.
+		if info, ok := debug.ReadBuildInfo(); ok {
+			if info.Main.Sum == "" {
+				info.Main.Sum = "unknown"
+			}
+			version = info.Main.Version
+			commit = info.Main.Sum
+		}
+	}
+}
 
 type commandFactory func(*kingpin.CmdClause) func(*gvm.Manager) error
 
@@ -91,6 +107,7 @@ func main() {
 	}
 
 	logrus.Debug("GVM version: ", version)
+	logrus.Debug("GVM commit: ", commit)
 	logrus.Debug("GVM arch: ", runtime.GOARCH)
 
 	action, exists := commands[selCommand]
