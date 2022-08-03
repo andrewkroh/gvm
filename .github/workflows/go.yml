@@ -9,7 +9,8 @@ on:
       - main
 
 jobs:
-  test:
+  goreleaser-build:
+    name: Go Releaser Build
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -24,18 +25,6 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
-      - name: check fmt
-        run: find . -name '*.go' | xargs gofmt -l | read && echo "Code differs from gofmt's style. Run 'gofmt -w .'" 1>&2 && exit 1 || true
-
-      - name: check go.mod
-        shell: bash
-        run: |
-          go mod tidy
-          git diff-index --quiet HEAD
-
-      - name: go test
-        run: go test ./...
-
       -
         name: cross build with goreleaser
         uses: goreleaser/goreleaser-action@v3
@@ -43,3 +32,25 @@ jobs:
           distribution: goreleaser
           version: latest
           args: build --rm-dist --snapshot
+
+  go-test:
+    name: Go Test
+    runs-on:
+      - macos-12
+      - windows-latest
+      - ubuntu-latest
+    strategy:
+      matrix:
+        go-version:
+          - 1.18
+          - 1.19
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: go test
+        run: go test ./...

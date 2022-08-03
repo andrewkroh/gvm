@@ -22,6 +22,12 @@ jobs:
 
       - uses: actions/checkout@v3
 
+      - name: check go.mod
+        shell: bash
+        run: |
+          go mod tidy
+          git diff-index --quiet HEAD
+
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
