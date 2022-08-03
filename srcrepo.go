@@ -96,7 +96,7 @@ func (m *Manager) installSrc(version *GoVersion) (string, error) {
 	}
 	defer os.RemoveAll(tmpRoot)
 
-	err = buildGo(log, tmpRoot, m.srcCacheDir(), version.String(), tag)
+	err = buildGo(log, tmpRoot, m.srcCacheDir(), version, tag)
 	if err != nil {
 		return "", err
 	}
@@ -116,7 +116,7 @@ func (m *Manager) installSrc(version *GoVersion) (string, error) {
 	return to, nil
 }
 
-func buildGo(log logrus.FieldLogger, buildDir, repo, version, tag string) error {
+func buildGo(log logrus.FieldLogger, buildDir, repo string, version *GoVersion, tag string) error {
 	log.Println("copy cache")
 	tmp := filepath.Join(buildDir, "go")
 	if err := gitClone(log, tmp, repo, false); err != nil {
@@ -135,10 +135,10 @@ func buildGo(log logrus.FieldLogger, buildDir, repo, version, tag string) error 
 		}
 	}
 
-	if version != "tip" {
+	if !version.IsTip() {
 		// write VERSION file
 		versionFile := filepath.Join(tmp, "VERSION")
-		err := ioutil.WriteFile(versionFile, []byte(version), 0o644)
+		err := ioutil.WriteFile(versionFile, []byte(version.String()), 0o644)
 		if err != nil {
 			return err
 		}
@@ -157,9 +157,17 @@ func buildGo(log logrus.FieldLogger, buildDir, repo, version, tag string) error 
 	} else {
 		cmd = makeCommand("bash", "make.bash")
 	}
+
 	cmd.Env = []string{
 		"GOROOT_BOOTSTRAP=" + bootstrap,
 	}
+
+	// Don't look for go.mod when building bootstrapping older pre-module
+	// versions while using a new module aware Go version.
+	if _, err := os.Stat(filepath.Join(srcDir, "go.mod")); errors.Is(err, os.ErrNotExist) {
+		cmd.Env = append(cmd.Env, "GO111MODULE=off")
+	}
+
 	return cmd.WithDir(srcDir).WithLogger(log).Exec()
 }
 
