@@ -12,6 +12,16 @@ type GoVersion struct {
 	version *version.Version
 }
 
+// MustParseVersion parses the given Go version to return a GoVersion.
+// Otherwise, it panics.
+func MustParseVersion(in string) *GoVersion {
+	v, err := ParseVersion(in)
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
 func ParseVersion(in string) (*GoVersion, error) {
 	var v *version.Version
 

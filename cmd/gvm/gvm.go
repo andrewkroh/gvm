@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"os"
+	"runtime"
 
 	"github.com/sirupsen/logrus"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
@@ -90,6 +91,7 @@ func main() {
 	}
 
 	logrus.Debug("GVM version: ", version)
+	logrus.Debug("GVM arch: ", runtime.GOARCH)
 
 	action, exists := commands[selCommand]
 	if !exists {

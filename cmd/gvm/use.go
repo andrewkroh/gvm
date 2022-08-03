@@ -11,10 +11,10 @@ import (
 )
 
 type useCmd struct {
-	version string
-	build,
-	noInstall bool
-	format string
+	version   string // Go version.
+	build     bool   // Build from source only.
+	noInstall bool   // If the version is not found locally then don't install it.
+	format    string // Shell command format to output.
 }
 
 func useCommand(cmd *kingpin.CmdClause) func(*gvm.Manager) error {
