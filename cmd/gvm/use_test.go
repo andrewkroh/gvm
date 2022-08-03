@@ -41,7 +41,7 @@ func TestGVMRunUse(t *testing.T) {
 		// Check that newer versions which use go.mod can be build from source.
 		{Version: "1.16.14", FromSource: true, Format: "bash", Cmds: []string{"export GOROOT=", "export PATH"}},
 		// Check that older versions which did not use go.mod can be build from source.
-		{Version: "1.7.4", FromSource: true, Format: "bash", Cmds: []string{"export GOROOT=", "export PATH"}},
+		{Version: "1.10.8", FromSource: true, Format: "bash", Cmds: []string{"export GOROOT=", "export PATH"}},
 		// Check that GO15VENDOREXPERIMENT is added for Go 1.5.
 		// NOTE: 1.5 requires Go 1.4 for bootstrapping if built from source.
 		{Version: "1.5.4", Format: "bash", Cmds: []string{"export GOROOT=", "export PATH", `export GO15VENDOREXPERIMENT="1"`}},
