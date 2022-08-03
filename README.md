@@ -30,7 +30,7 @@ binary in your `PATH` and mark it as executable (`chmod +x gvm`).
 
 You must adjust the version and platform info in URLs accordingly.
 
-Linux:
+Linux (amd64):
 
 ``` bash
 # Linux Example (assumes ~/bin is in PATH).
@@ -40,7 +40,7 @@ eval "$(gvm 1.17.8)"
 go version
 ```
 
-macOS:
+macOS (amd64):
 
 ``` bash
 # macOS Example
@@ -50,7 +50,17 @@ eval "$(gvm 1.17.8)"
 go version
 ```
 
-Windows (Powershell):
+macOS (arm64):
+
+``` bash
+# macOS Example
+curl -sL -o /usr/local/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.4.1/gvm-darwin-arm64
+chmod +x /usr/local/bin/gvm
+eval "$(gvm 1.17.8)"
+go version
+```
+
+Windows (PowerShell):
 
 ```
 [Net.ServicePointManager]::SecurityProtocol = "tls12"
