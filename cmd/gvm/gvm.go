@@ -52,7 +52,7 @@ func main() {
 	}
 
 	app.Flag("os", "Go binaries target os.").StringVar(&manager.GOOS)
-	app.Flag("arch", "Go binaries target architecture.").StringVar(&manager.GOOS)
+	app.Flag("arch", "Go binaries target architecture.").StringVar(&manager.GOARCH)
 	app.Flag("home", "GVM home directory.").StringVar(&manager.Home)
 	app.Flag("url", "Go binaries repository base URL.").StringVar(&manager.GoStorageHome)
 	app.Flag("repository", "Go upstream git repository.").StringVar(&manager.GoSourceURL)

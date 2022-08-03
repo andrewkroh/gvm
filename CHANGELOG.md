@@ -8,6 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fix `--arch` flag and associated `GVM_ARCH` env variable. [#53](https://github.com/andrewkroh/gvm/pull/53)
+
 ### Added
 
 ## [0.4.1]
