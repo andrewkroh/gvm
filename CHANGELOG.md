@@ -15,6 +15,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+## [0.5.0]
+
+### Changed
+
+- Updated releases to use Go 1.18. [#54](https://github.com/andrewkroh/gvm/pull/54)
+- Report Go module version from `gvm --version` if installed via `go install`. [#57](https://github.com/andrewkroh/gvm/pull/57)
+
+### Fixed
+
+- Fix `--arch` flag and associated `GVM_ARCH` env variable. [#53](https://github.com/andrewkroh/gvm/pull/53)
+
 ## [0.4.1]
 
 ### Fixed
@@ -140,7 +151,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 Initial release.
 
-[Unreleased]: https://github.com/andrewkroh/gvm/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/andrewkroh/gvm/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/andrewkroh/gvm/releases/tag/v0.5.0
 [0.4.1]: https://github.com/andrewkroh/gvm/releases/tag/v0.4.1
 [0.4.0]: https://github.com/andrewkroh/gvm/releases/tag/v0.4.0
 [0.3.2]: https://github.com/andrewkroh/gvm/releases/tag/v0.3.2
