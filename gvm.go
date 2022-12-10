@@ -11,9 +11,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sirupsen/logrus"
-
 	"github.com/andrewkroh/gvm/common"
+	"github.com/andrewkroh/gvm/internal/utils"
+	"github.com/andrewkroh/gvm/internal/utils/httpproxy"
+	"github.com/andrewkroh/gvm/internal/utils/httpproxy/socks"
+	"github.com/sirupsen/logrus"
 )
 
 type AvailableVersion struct {
@@ -36,8 +38,8 @@ func (av AvailableVersion) String() string {
 }
 
 type Manager struct {
-	// GVM Home directory. Defaults to $HOME/.gvm
-	Home string
+	// GVM work directory. Defaults to $HOME/.gvm
+	WorkDir string
 
 	// GOOS settings. Defaults to current OS.
 	GOOS string
@@ -54,6 +56,7 @@ type Manager struct {
 	// Defaults to https://go.googlesource.com/go
 	GoSourceURL string
 
+	Proxy       httpproxy.Proxy
 	HTTPTimeout time.Duration
 
 	Logger logrus.FieldLogger
@@ -63,14 +66,33 @@ type Manager struct {
 	logsDir     string
 }
 
+func NewDefaultWithProxy() (*Manager, error) {
+	manager, err := NewDefault()
+	if err != nil {
+		return nil, err
+	}
+
+	manager.Proxy = socks.NewSocks5Proxy()
+
+	return manager, nil
+}
+
+func NewDefault() (*Manager, error) {
+	m := &Manager{}
+	if err := m.Init(); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (m *Manager) Init() error {
-	if m.Home == "" {
-		home, err := homeDir()
+	if m.WorkDir == "" {
+		home, err := utils.GetUserHomeDir()
 		if err != nil {
 			return err
 		}
 
-		m.Home = filepath.Join(home, ".gvm")
+		m.WorkDir = filepath.Join(home, ".gvm")
 	}
 
 	if m.GoStorageHome == "" {
@@ -102,17 +124,17 @@ func (m *Manager) Init() error {
 		m.Logger = logrus.StandardLogger()
 	}
 
-	m.cacheDir = filepath.Join(m.Home, "cache")
-	m.versionsDir = filepath.Join(m.Home, "versions")
-	m.logsDir = filepath.Join(m.Home, "logs")
-	return m.ensureDirStruct()
+	m.cacheDir = filepath.Join(m.WorkDir, "cache")
+	m.versionsDir = filepath.Join(m.WorkDir, "versions")
+	m.logsDir = filepath.Join(m.WorkDir, "logs")
+	return m.initWorkDirs()
 }
 
 func (m *Manager) UpdateCache() error {
 	return m.updateSrcCache()
 }
 
-func (m *Manager) ensureDirStruct() error {
+func (m *Manager) initWorkDirs() error {
 	for _, dir := range []string{m.cacheDir, m.versionsDir, m.logsDir} {
 		if err := os.MkdirAll(dir, os.ModeDir|0o755); err != nil {
 			return err

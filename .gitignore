@@ -1,7 +1,10 @@
 *.exe
 *.iml
 .idea
+.vscode
 
 **/gvm
 !**/gvm/
 dist/
+
+gvm

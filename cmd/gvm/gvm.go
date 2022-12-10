@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"runtime"
@@ -53,36 +54,45 @@ func init() {
 
 type commandFactory func(*kingpin.CmdClause) func(*gvm.Manager) error
 
+var (
+	commands = map[string]func(*gvm.Manager) error{}
+)
+
+func registerCommand(app *kingpin.Application, factory commandFactory, name, doc string) *kingpin.CmdClause {
+	cmd := app.Command(name, doc)
+	act := factory(cmd)
+	if act != nil {
+		commands[name] = act
+	}
+	return cmd
+}
+
 func main() {
 	app := kingpin.New("gvm", usage)
 	debug := app.Flag("debug", "Enable debug logging to stderr.").Short('d').Bool()
 
-	manager := &gvm.Manager{}
-	commands := map[string]func(*gvm.Manager) error{}
-	command := func(factory commandFactory, name, doc string) *kingpin.CmdClause {
-		cmd := app.Command(name, doc)
-		act := factory(cmd)
-		if act != nil {
-			commands[name] = act
-		}
-		return cmd
+	// manager := &gvm.Manager{}
+	manager, err := gvm.NewDefaultWithProxy()
+	if err != nil {
+		panic(fmt.Sprintf("failed to build default gvm, err=%s", err.Error()))
 	}
 
 	app.Flag("os", "Go binaries target os.").StringVar(&manager.GOOS)
 	app.Flag("arch", "Go binaries target architecture.").StringVar(&manager.GOARCH)
-	app.Flag("home", "GVM home directory.").StringVar(&manager.Home)
+	app.Flag("home", "GVM home directory.").StringVar(&manager.WorkDir)
 	app.Flag("url", "Go binaries repository base URL.").StringVar(&manager.GoStorageHome)
 	app.Flag("repository", "Go upstream git repository.").StringVar(&manager.GoSourceURL)
 	app.Flag("http-timeout", "Timeout for HTTP requests.").Default("3m").DurationVar(&manager.HTTPTimeout)
 
-	command(useCommand, "use", "prepare go version and print environment variables").
-		Default()
-	command(initCommand, "init", "init .gvm and update source cache")
-	command(installCommand, "install", "install go version if not already installed")
-	command(availCommand, "available", "list all installable go versions")
-	command(listCommand, "list", "list installed versions")
-	command(removeCommand, "remove", "remove a go version")
-	command(purgeCommand, "purge", "remove all but the newest go version")
+	// register subcommand
+	registerCommand(app, useCommand, "use", "prepare go version and print environment variables").Default()
+	registerCommand(app, initCommand, "init", "init .gvm and update source cache")
+	registerCommand(app, installCommand, "install", "install go version if not already installed")
+	registerCommand(app, availCommand, "available", "list all installable go versions")
+	registerCommand(app, listCommand, "list", "list installed versions")
+	registerCommand(app, removeCommand, "remove", "remove a go version")
+	registerCommand(app, purgeCommand, "purge", "remove all but the newest go version")
+	registerCommand(app, configCommand, "config", "setting gvm configs")
 
 	app.Version(version)
 	app.HelpFlag.Short('h')

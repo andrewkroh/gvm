@@ -29,7 +29,7 @@ func (m *Manager) installBinary(version *GoVersion) (string, error) {
 	}
 
 	goURL := fmt.Sprintf("%s/go%v.%v-%v.%v", m.GoStorageHome, version, m.GOOS, m.GOARCH, extension)
-	path, err := common.DownloadFile(goURL, tmp, m.HTTPTimeout)
+	path, err := common.DownloadFile(goURL, tmp, m.newHTTPClient())
 	if err != nil {
 		return "", fmt.Errorf("failed downloading from %v: %w", goURL, err)
 	}
@@ -73,11 +73,19 @@ func (m *Manager) AvailableBinaries() ([]*GoVersion, error) {
 	return list, nil
 }
 
-func (m *Manager) iterXMLDirListing(home string, fn func(entry string) bool) error {
-	marker := ""
+func (m *Manager) newHTTPClient() *http.Client {
 	client := &http.Client{
 		Timeout: m.HTTPTimeout,
 	}
+	if m.Proxy != nil {
+		client.Transport = m.Proxy.NewTransport()
+	}
+	return client
+}
+
+func (m *Manager) iterXMLDirListing(home string, fn func(entry string) bool) error {
+	marker := ""
+	client := m.newHTTPClient()
 
 	for {
 		type contents struct {

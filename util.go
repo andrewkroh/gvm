@@ -2,29 +2,12 @@ package gvm
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/andrewkroh/gvm/common"
 )
-
-func homeDir() (string, error) {
-	var homeDir string
-	if runtime.GOOS == "windows" {
-		homeDir = os.Getenv("USERPROFILE")
-	} else {
-		homeDir = os.Getenv("HOME")
-	}
-
-	if _, err := os.Stat(homeDir); err != nil {
-		return "", fmt.Errorf("failed to access home dir: %w", err)
-	}
-
-	return homeDir, nil
-}
 
 func extractTo(to, file string) (string, error) {
 	tmpDir := to + ".tmp"
