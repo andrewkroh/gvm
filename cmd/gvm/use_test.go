@@ -35,6 +35,8 @@ func TestGVMRunUse(t *testing.T) {
 		Cmds       []string
 		FromSource bool
 	}{
+		{Version: "1.21.0", Format: "bash", Cmds: []string{"export GOROOT=", "export PATH"}},
+		{Version: "1.21", Format: "bash", Cmds: []string{"export GOROOT=", "export PATH"}},
 		// Using 1.16+ allows testing on Apple M1.
 		{Version: "1.16.15", Format: "bash", Cmds: []string{"export GOROOT=", "export PATH"}},
 		{Version: "1.16.15", Format: "batch", Cmds: []string{"set GOROOT=", "set PATH"}},
