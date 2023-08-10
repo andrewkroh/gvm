@@ -1,7 +1,7 @@
 package main
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 	"runtime"
 	"runtime/debug"
@@ -95,7 +95,7 @@ func main() {
 		if *debug {
 			logrus.SetOutput(os.Stderr)
 		} else {
-			logrus.SetOutput(ioutil.Discard)
+			logrus.SetOutput(io.Discard)
 		}
 		return nil
 	})

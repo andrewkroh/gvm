@@ -3,7 +3,6 @@ package gvm
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -61,11 +60,11 @@ func writeJSONFile(filename string, value interface{}) error {
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(filename, contents, 0o644)
+	return os.WriteFile(filename, contents, 0o644)
 }
 
 func readJSONFile(filename string, to interface{}) error {
-	contents, err := ioutil.ReadFile(filename)
+	contents, err := os.ReadFile(filename)
 	if err != nil {
 		return err
 	}

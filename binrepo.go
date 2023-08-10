@@ -3,7 +3,6 @@ package gvm
 import (
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -17,7 +16,7 @@ var reGostoreVersion = regexp.MustCompile(`go(.*)\.(.*)-(.*)\..*`)
 func (m *Manager) installBinary(version *GoVersion) (string, error) {
 	godir := m.versionDir(version)
 
-	tmp, err := ioutil.TempDir("", godir)
+	tmp, err := os.MkdirTemp("", godir)
 	if err != nil {
 		return "", err
 	}
