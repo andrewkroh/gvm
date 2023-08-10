@@ -46,7 +46,11 @@ func (v *GoVersion) String() string {
 		return fmt.Sprintf("%v.%v%v", seg[0], seg[1], v.version.Prerelease())
 	}
 
-	if len(seg) > 2 && seg[2] == 0 {
+	// Before 1.21 the initial minor releases didn't include a patch number. So
+	// the first 1.20 version was named with '1.20' instead of '1.20.0'. Starting
+	// in 1.21 the initial release includes the patch and was '1.21.0'. This formats
+	// version specifiers like 1.20.0 as 1.20.
+	if len(seg) > 2 && seg[2] == 0 && seg[0] <= 1 && seg[1] < 21 {
 		return fmt.Sprintf("%v.%v", seg[0], seg[1])
 	}
 	return v.version.String()
