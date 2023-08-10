@@ -7,15 +7,18 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
+	"time"
 )
 
 func Extract(sourceFile, destinationDir string) error {
 	switch {
 	case strings.HasSuffix(sourceFile, ".tar.gz"), strings.HasSuffix(sourceFile, ".tgz"):
-		return untar(sourceFile, destinationDir)
+		return untarFile(sourceFile, destinationDir)
 	case strings.HasSuffix(sourceFile, ".zip"):
 		return unzip(sourceFile, destinationDir)
 	default:
@@ -75,60 +78,115 @@ func unzip(sourceFile, destinationDir string) error {
 	return nil
 }
 
-func untar(sourceFile, destinationDir string) error {
+func untarFile(sourceFile, destinationDir string) error {
 	file, err := os.Open(sourceFile)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	var fileReader io.ReadCloser = file
+	return untar(file, destinationDir)
+}
 
-	if strings.HasSuffix(sourceFile, ".gz") {
-		if fileReader, err = gzip.NewReader(file); err != nil {
-			return err
-		}
-		defer fileReader.Close()
+// Copyright 2017 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+//
+// Modified from golang.org/x/build/internal/untar.
+
+// untar reads the gzip-compressed tar file from r and writes it into dir.
+func untar(r io.Reader, dir string) (err error) {
+	t0 := time.Now()
+	madeDir := map[string]bool{}
+
+	zr, err := gzip.NewReader(r)
+	if err != nil {
+		return fmt.Errorf("requires gzip-compressed body: %v", err)
 	}
 
-	tarBallReader := tar.NewReader(fileReader)
-
+	tr := tar.NewReader(zr)
 	for {
-		header, err := tarBallReader.Next()
-		if err != nil {
-			if errors.Is(err, io.EOF) {
-				break
-			}
-			return err
+		f, err := tr.Next()
+		if err == io.EOF {
+			break
 		}
+		if err != nil {
+			return fmt.Errorf("tar error: %v", err)
+		}
+		if !validRelPath(f.Name) {
+			return fmt.Errorf("tar contained invalid name error %q", f.Name)
+		}
+		rel := filepath.FromSlash(f.Name)
+		abs := filepath.Join(dir, rel)
 
-		filename := filepath.Join(destinationDir, header.Name)
-
-		switch header.Typeflag {
-		case tar.TypeDir:
-			err = os.MkdirAll(filename, os.FileMode(header.Mode)) // or use 0755 if you prefer
-			if err != nil {
-				return err
-			}
-
+		mode := f.FileInfo().Mode()
+		switch f.Typeflag {
 		case tar.TypeReg:
-			writer, err := os.Create(filename)
+			// Make the directory. This is redundant because it should
+			// already be made by a directory entry in the tar
+			// beforehand. Thus, don't check for errors; the next
+			// write will fail with the same error.
+			dir := filepath.Dir(abs)
+			if !madeDir[dir] {
+				if err := os.MkdirAll(filepath.Dir(abs), 0755); err != nil {
+					return err
+				}
+				madeDir[dir] = true
+			}
+			if runtime.GOOS == "darwin" && mode&0111 != 0 {
+				// The darwin kernel caches binary signatures
+				// and SIGKILLs binaries with mismatched
+				// signatures. Overwriting a binary with
+				// O_TRUNC does not clear the cache, rendering
+				// the new copy unusable. Removing the original
+				// file first does clear the cache. See #54132.
+				err := os.Remove(abs)
+				if err != nil && !errors.Is(err, fs.ErrNotExist) {
+					return err
+				}
+			}
+			wf, err := os.OpenFile(abs, os.O_RDWR|os.O_CREATE|os.O_TRUNC, mode.Perm())
 			if err != nil {
 				return err
 			}
-
-			if _, err = io.Copy(writer, tarBallReader); err != nil {
+			n, err := io.Copy(wf, tr)
+			if closeErr := wf.Close(); closeErr != nil && err == nil {
+				err = closeErr
+			}
+			if err != nil {
+				return fmt.Errorf("error writing to %s: %v", abs, err)
+			}
+			if n != f.Size {
+				return fmt.Errorf("only wrote %d bytes to %s; expected %d", n, abs, f.Size)
+			}
+			modTime := f.ModTime
+			if modTime.After(t0) {
+				// Clamp modtimes at system time. See
+				// golang.org/issue/19062 when clock on
+				// buildlet was behind the gitmirror server
+				// doing the git-archive.
+				modTime = t0
+			}
+			if !modTime.IsZero() {
+				_ = os.Chtimes(abs, modTime, modTime)
+			}
+		case tar.TypeDir:
+			if err := os.MkdirAll(abs, 0755); err != nil {
 				return err
 			}
-
-			if err = os.Chmod(filename, os.FileMode(header.Mode)); err != nil {
-				return err
-			}
-
-			writer.Close()
+			madeDir[abs] = true
+		case tar.TypeXGlobalHeader:
+			// git archive generates these. Ignore them.
 		default:
-			return fmt.Errorf("unable to untar type: %c in file %s", header.Typeflag, filename)
+			return fmt.Errorf("tar file entry %s contained unsupported file type %v", f.Name, mode)
 		}
 	}
 	return nil
+}
+
+func validRelPath(p string) bool {
+	if p == "" || strings.Contains(p, `\`) || strings.HasPrefix(p, "/") || strings.Contains(p, "../") {
+		return false
+	}
+	return true
 }
