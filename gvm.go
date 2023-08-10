@@ -3,7 +3,6 @@ package gvm
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -192,7 +191,7 @@ func (m *Manager) Remove(version *GoVersion) error {
 
 // Installed returns all installed go version
 func (m *Manager) Installed() ([]*GoVersion, error) {
-	files, err := ioutil.ReadDir(m.versionsDir)
+	files, err := os.ReadDir(m.versionsDir)
 	if err != nil {
 		return nil, err
 	}

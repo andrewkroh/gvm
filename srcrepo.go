@@ -3,7 +3,6 @@ package gvm
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -90,7 +89,7 @@ func (m *Manager) installSrc(version *GoVersion) (string, error) {
 	godir := m.versionDir(version)
 
 	log.Println("create temp directory")
-	tmpRoot, err := ioutil.TempDir("", godir)
+	tmpRoot, err := os.MkdirTemp("", godir)
 	if err != nil {
 		return "", err
 	}
@@ -138,7 +137,7 @@ func buildGo(log logrus.FieldLogger, buildDir, repo string, version *GoVersion, 
 	if !version.IsTip() {
 		// write VERSION file
 		versionFile := filepath.Join(tmp, "VERSION")
-		err := ioutil.WriteFile(versionFile, []byte(version.String()), 0o644)
+		err := os.WriteFile(versionFile, []byte(version.String()), 0o644)
 		if err != nil {
 			return err
 		}
