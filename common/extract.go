@@ -128,12 +128,12 @@ func untar(r io.Reader, dir string) (err error) {
 			// write will fail with the same error.
 			dir := filepath.Dir(abs)
 			if !madeDir[dir] {
-				if err := os.MkdirAll(filepath.Dir(abs), 0755); err != nil {
+				if err := os.MkdirAll(filepath.Dir(abs), 0o755); err != nil {
 					return err
 				}
 				madeDir[dir] = true
 			}
-			if runtime.GOOS == "darwin" && mode&0111 != 0 {
+			if runtime.GOOS == "darwin" && mode&0o111 != 0 {
 				// The darwin kernel caches binary signatures
 				// and SIGKILLs binaries with mismatched
 				// signatures. Overwriting a binary with
@@ -171,7 +171,7 @@ func untar(r io.Reader, dir string) (err error) {
 				_ = os.Chtimes(abs, modTime, modTime)
 			}
 		case tar.TypeDir:
-			if err := os.MkdirAll(abs, 0755); err != nil {
+			if err := os.MkdirAll(abs, 0o755); err != nil {
 				return err
 			}
 			madeDir[abs] = true
