@@ -23,9 +23,9 @@ type retryParams struct {
 	retryDelay time.Duration
 }
 
-var DefaultRetryParams retryParams = retryParams{
+var DefaultRetryParams = retryParams{
 	maxRetries: 5,
-	retryDelay: time.Duration(10 * time.Second),
+	retryDelay: 10 * time.Second,
 }
 
 func DownloadFile(url, destinationDir string, httpTimeout time.Duration, r retryParams) (string, error) {
