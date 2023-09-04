@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Updated releases to use Go 1.18. [#54](https://github.com/andrewkroh/gvm/pull/54)
 - Report Go module version from `gvm --version` if installed via `go install`. [#57](https://github.com/andrewkroh/gvm/pull/57)
+- Add wait between retries when there are download errors. [#65](https://github.com/andrewkroh/gvm/pull/65)
 
 ### Fixed
 
