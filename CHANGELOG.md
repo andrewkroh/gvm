@@ -10,13 +10,29 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+## [0.5.2]
+
+### Changed
+
+- Add 10s wait between retries when there are download errors. [#65](https://github.com/andrewkroh/gvm/pull/65)
+ 
+## [0.5.1]
+
+### Changed
+
+- This release is built with Go 1.20.7. [#63](https://github.com/andrewkroh/gvm/pull/63)
+
+### Fixed
+
+- Fixed installation of Go 1.21.0. Versioning conventions changed as per golang/go#57631. [#61](https://github.com/andrewkroh/gvm/issues/61)
+- Fixed issues unpacking tar files for Go 1.21.0 releases. Relates to golang/go#61862. [#61](https://github.com/andrewkroh/gvm/issues/61)
+
 ## [0.5.0]
 
 ### Changed
 
 - Updated releases to use Go 1.18. [#54](https://github.com/andrewkroh/gvm/pull/54)
 - Report Go module version from `gvm --version` if installed via `go install`. [#57](https://github.com/andrewkroh/gvm/pull/57)
-- Add wait between retries when there are download errors. [#65](https://github.com/andrewkroh/gvm/pull/65)
 
 ### Fixed
 
@@ -147,7 +163,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 Initial release.
 
-[Unreleased]: https://github.com/andrewkroh/gvm/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/andrewkroh/gvm/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/andrewkroh/gvm/releases/tag/v0.5.2
+[0.5.1]: https://github.com/andrewkroh/gvm/releases/tag/v0.5.1
 [0.5.0]: https://github.com/andrewkroh/gvm/releases/tag/v0.5.0
 [0.4.1]: https://github.com/andrewkroh/gvm/releases/tag/v0.4.1
 [0.4.0]: https://github.com/andrewkroh/gvm/releases/tag/v0.4.0
