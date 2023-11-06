@@ -33,6 +33,25 @@ jobs:
           version: latest
           args: build --rm-dist --snapshot
 
+  gvm-install:
+    name: GoReleaser Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
+
+      - name: run gvm-installer
+        run: ./gvm-install
+
+      - name: run gvm
+        run: |-
+          gvm --version
+          gvm help
+
   test-linux:
     name: Go Test (Linux)
     runs-on: ubuntu-latest

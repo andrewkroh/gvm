@@ -1,5 +1,4 @@
-gvm
-===
+# gvm
 
 gvm is a Go version manager. gvm installs a Go version and prints the commands
 to configure your environment to use it. gvm can install Go binary versions from
@@ -21,8 +20,7 @@ powershell:
 gvm flags can be set via environment variables by setting `GVM_<flag>`. For
 example `--http-timeout` can be set via `GVM_HTTP_TIMEOUT=10m`.
 
-Installation
-------------
+## Manual installation
 
 You can download a binary release of `gvm` for your specific platform from the
 [releases](https://github.com/andrewkroh/gvm/releases) page. Then just put the
@@ -76,3 +74,17 @@ Use `gvm` with fish shell by executing `gvm 1.21.0 | source` in lieu of using `e
 For existing Go users:
 
 `go install github.com/andrewkroh/gvm/cmd/gvm@v0.5.2`
+
+## Single-line installation
+
+```shell
+curl -sSL https://raw.githubusercontent.com/andrewkroh/gvm/v0.5.2/gvm-installer | sh -s
+```
+
+If you use `wget` instead:
+
+```shell
+wget -qO- https://raw.githubusercontent.com/andrewkroh/gvm/v0.5.2/gvm-installer | sh -s
+```
+
+That will download the `gvm`, put it inside `$GOPATH/bin/`, give it execution rights with `chmod`, and setting the `GOPATH` environment variable and adding `$GOPATH/bin` to the PATH.
