@@ -1,0 +1,30 @@
+#!/usr/bin/env sh
+
+set -o errexit
+set -o nounset
+
+GOPATH=${GOPATH:-$HOME/go}
+GVM_CMD="${GOPATH}/bin/gvm"
+export PATH="$GOPATH/bin:$PATH"
+
+## NOTE: Bump this version when a new release.
+VERSION=0.5.2
+OS=$(uname -s| tr '[:upper:]' '[:lower:]')
+ARCH=$(uname -m| tr '[:upper:]' '[:lower:]')
+if [ "${ARCH}" = "aarch64" ] ; then
+    GVM_ARCH_SUFFIX=arm64
+elif [ "${ARCH}" = "x86_64" ] ; then
+    GVM_ARCH_SUFFIX=amd64
+elif [ "${ARCH}" = "i686" ] ; then
+    GVM_ARCH_SUFFIX=386
+elif [ "${ARCH}" = "arm64" ] ; then
+    GVM_ARCH_SUFFIX=arm64
+else
+    GVM_ARCH_SUFFIX=arm
+fi
+
+mkdir -p "$GOPATH/bin"
+curl -sSLo "${GVM_CMD}" "https://github.com/andrewkroh/gvm/releases/download/v${VERSION}/gvm-${OS}-${GVM_ARCH_SUFFIX}"
+chmod +x "${GVM_CMD}"
+
+echo 'gvm has been installed correctly, you can now run: eval "$(gvm 1.21.0)" or similar'
