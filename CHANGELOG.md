@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- This release is built with Go 1.22.1. [#73](https://github.com/andrewkroh/gvm/pull/73)
+
 ### Fixed
 
 ### Added
