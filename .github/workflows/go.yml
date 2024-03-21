@@ -33,7 +33,7 @@ jobs:
         with:
           distribution: goreleaser
           version: latest
-          args: build --rm-dist --snapshot
+          args: build --clean --snapshot
 
   test:
     name: Test
