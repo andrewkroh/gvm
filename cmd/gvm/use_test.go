@@ -23,6 +23,7 @@ var (
 	go1_9  = gvm.MustParseVersion("1.9")
 	go1_11 = gvm.MustParseVersion("1.11")
 	go1_16 = gvm.MustParseVersion("1.16")
+	go1_21 = gvm.MustParseVersion("1.21")
 )
 
 func TestGVMRunUse(t *testing.T) {
@@ -69,6 +70,12 @@ func TestGVMRunUse(t *testing.T) {
 
 			if tc.FromSource && runtime.GOOS == "darwin" && ver.LessThan(go1_11) {
 				t.Skip("Go 1.10 fails on MacOS 12. https://github.com/golang/go/wiki/MacOS12BSDThreadRegisterIssue")
+			}
+
+			// Go 1.21 and newer will try to download a toolchain to match the version in the go.mod.
+			// Disable this behavior so that only the Go version manged by GVM is used.
+			if !ver.LessThan(go1_21) {
+				t.Setenv("GOTOOLCHAIN", "local")
 			}
 
 			output, err := withStdout(func() {
