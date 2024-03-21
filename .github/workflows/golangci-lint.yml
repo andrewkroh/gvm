@@ -11,6 +11,11 @@ on:
 permissions:
   contents: read
 
+# Only one build per ref.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   golangci:
     name: golangci-lint

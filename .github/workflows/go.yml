@@ -8,53 +8,18 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
+# Only one build per ref.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   goreleaser-build:
     name: GoReleaser Build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version:
-          - '1.20'
-          - '1.21'
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: ${{ matrix.go-version }}
-
-      -
-        name: cross build with goreleaser
-        uses: goreleaser/goreleaser-action@v3
-        with:
-          distribution: goreleaser
-          version: latest
-          args: build --rm-dist --snapshot
-
-  test-linux:
-    name: Go Test (Linux)
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version:
-          - '1.20'
-          - '1.21'
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: ${{ matrix.go-version }}
-
-      - name: go test
-        run: go test ./...
-
-  test-macos:
-    name: Go Test (macOS 12) (1.20)
-    runs-on: macos-12
     steps:
       - uses: actions/checkout@v3
 
@@ -63,12 +28,20 @@ jobs:
         with:
           go-version: '1.20'
 
-      - name: go test
-        run: go test ./...
+      - name: cross build with goreleaser
+        uses: goreleaser/goreleaser-action@v3
+        with:
+          distribution: goreleaser
+          version: latest
+          args: build --clean --snapshot
 
-  test-windows:
-    name: Go Test (Windows) (1.20)
-    runs-on: windows-latest
+  test:
+    name: Test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
 
