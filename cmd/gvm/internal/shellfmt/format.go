@@ -106,21 +106,14 @@ func (*batchFormatter) Append(name, val string) string {
 	return fmt.Sprintf(`set %v=%v;%v`, name, os.Getenv(name), val)
 }
 
-func getWindowsPathSeparator() string {
-	if runtime.GOOS == "windows" {
-		return ";"
-	}
-	return ":"
-}
-
 func (*powershellFormatter) Set(name, val string) string {
 	return fmt.Sprintf(`$env:%v = "%v"`, name, val)
 }
 
 func (*powershellFormatter) Prepend(name, val string) string {
-	return fmt.Sprintf(`$env:%v = "%v%v$env:%v"`, name, val, getWindowsPathSeparator(), name)
+	return fmt.Sprintf(`$env:%v = "%v%c$env:%v"`, name, val, os.PathListSeparator, name)
 }
 
 func (*powershellFormatter) Append(name, val string) string {
-	return fmt.Sprintf(`$env:%v="$env:%v%v%v"`, name, name, getWindowsPathSeparator(), val)
+	return fmt.Sprintf(`$env:%v="$env:%v%c%v"`, name, name, os.PathListSeparator, val)
 }
