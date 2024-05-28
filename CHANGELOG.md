@@ -10,6 +10,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed path separator format for Powershell on Linux [#81](https://github.com/andrewkroh/gvm/issues/81)
+
 ### Added
 
 ## [0.5.2]
