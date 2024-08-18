@@ -26,7 +26,7 @@ jobs:
       - name: set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22.x'
+          go-version: '1.23.x'
 
       - name: cross build with goreleaser
         uses: goreleaser/goreleaser-action@v6
@@ -48,7 +48,7 @@ jobs:
       - name: set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22.x'
+          go-version: '1.23.x'
 
       - name: go test
         run: go test -timeout 15m ./...
