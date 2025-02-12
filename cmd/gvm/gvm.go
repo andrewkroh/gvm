@@ -90,7 +90,7 @@ func main() {
 	app.UsageTemplate(kingpin.SeparateOptionalFlagsUsageTemplate)
 
 	// Enable debug.
-	app.PreAction(func(ctx *kingpin.ParseContext) error {
+	app.PreAction(func(*kingpin.ParseContext) error {
 		logrus.SetLevel(logrus.DebugLevel)
 		if *debug {
 			logrus.SetOutput(os.Stderr)
