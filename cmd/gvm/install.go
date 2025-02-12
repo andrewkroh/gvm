@@ -12,7 +12,7 @@ func installCommand(cmd *kingpin.CmdClause) func(*gvm.Manager) error {
 	var version string
 	var build bool
 	cmd.Flag("build", "Build go version from source").Short('b').BoolVar(&build)
-	cmd.Arg("version", "Go version to install (e.g. 1.21.0).").StringVar(&version)
+	cmd.Arg("version", "Go version to install (e.g. 1.24.0).").StringVar(&version)
 
 	return func(manager *gvm.Manager) error {
 		if version == "" {
