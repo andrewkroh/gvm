@@ -1,6 +1,6 @@
 module github.com/andrewkroh/gvm
 
-go 1.23
+go 1.24
 
 require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
