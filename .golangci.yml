@@ -1,80 +1,85 @@
----
-
+version: "2"
 run:
-  issues-exit-code: 1
   modules-download-mode: readonly
-
+  issues-exit-code: 1
 linters:
-  disable-all: true
+  default: none
   enable:
     - errcheck
-    - gosimple
+    - errorlint
+    - godox
     - govet
     - ineffassign
-    - staticcheck
-    - stylecheck
-    - typecheck
-    - unused
-    - errorlint
-    - gofumpt
-    - goimports
-    - godox
     - misspell
     - prealloc
-    - unconvert
     - revive
-  fast: false
-
-linters-settings:
-  goimports:
-    local-prefixes: github.com/andrewkroh/gvm
-  gofumpt:
-    extra-rules: true
-  revive:
-    enable-all-rules: false
-    # https://github.com/mgechev/revive/blob/master/RULES_DESCRIPTIONS.md
-    rules:
-      - name: bare-return
-      - name: call-to-gc
-      - name: confusing-results
-      - name: constant-logical-expr
-      - name: context-as-argument
-      - name: deep-exit
-      - name: defer
-      - name: duplicated-imports
-      - name: early-return
-      - name: empty-block
-      - name: error-strings
-      - name: errorf
-      - name: exported
-        arguments:
-          - checkPrivateReceivers
-      - name: imports-blacklist
-        arguments:
-          - github.com/pkg/errors
-      - name: increment-decrement
-      - name: range
-      - name: range-val-address
-      - name: range-val-in-closure
-      - name: receiver-naming
-      - name: struct-tag
-      - name: time-naming
-      - name: unconditional-recursion
-      - name: unexported-naming
-      - name: unexported-return
-      - name: unnecessary-stmt
-      - name: unreachable-code
-      - name: unused-parameter
-      - name: unused-receiver
-      - name: var-declaration
-      - name: waitgroup-by-value
-  stylecheck:
-    checks:
-      - all
-
-issues:
-  include:
-    # If you're going to write a comment follow the conventions.
-    # https://go.dev/doc/effective_go#commentary.
-    # comment on exported (.+) should be of the form "(.+)..."
-    - EXC0014
+    - staticcheck
+    - unconvert
+    - unused
+  settings:
+    revive:
+      enable-all-rules: false
+      rules:
+        - name: bare-return
+        - name: call-to-gc
+        - name: confusing-results
+        - name: constant-logical-expr
+        - name: context-as-argument
+        - name: deep-exit
+        - name: defer
+        - name: duplicated-imports
+        - name: early-return
+        - name: empty-block
+        - name: error-strings
+        - name: errorf
+        - name: exported
+          arguments:
+            - checkPrivateReceivers
+        - name: imports-blocklist
+          arguments:
+            - github.com/pkg/errors
+        - name: increment-decrement
+        - name: range
+        - name: range-val-address
+        - name: range-val-in-closure
+        - name: receiver-naming
+        - name: struct-tag
+        - name: time-naming
+        - name: unconditional-recursion
+        - name: unexported-naming
+        - name: unexported-return
+        - name: unnecessary-stmt
+        - name: unreachable-code
+        - name: unused-parameter
+        - name: unused-receiver
+        - name: var-declaration
+        - name: waitgroup-by-value
+    staticcheck:
+      checks:
+        - all
+  exclusions:
+    generated: lax
+    presets:
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofumpt
+    - goimports
+  settings:
+    gofumpt:
+      extra-rules: true
+    goimports:
+      local-prefixes:
+        - github.com/andrewkroh/gvm
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
