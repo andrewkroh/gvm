@@ -1,7 +1,7 @@
 package main
 
 import (
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
+	"github.com/alecthomas/kingpin/v2"
 
 	"github.com/andrewkroh/gvm"
 )

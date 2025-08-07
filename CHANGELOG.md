@@ -6,7 +6,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- This release is built with Go 1.22.1. [#73](https://github.com/andrewkroh/gvm/pull/73)
+### Fixed
+
+### Added
+
+## [0.5.3]
+
+### Changed
+
+- This release is built with Go 1.24.6. [#109](https://github.com/andrewkroh/gvm/pull/109)
 
 ### Fixed
 
@@ -167,7 +175,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 Initial release.
 
-[Unreleased]: https://github.com/andrewkroh/gvm/compare/v0.5.2...HEAD
+[Unreleased]: https://github.com/andrewkroh/gvm/compare/v0.5.3...HEAD
+[0.5.2]: https://github.com/andrewkroh/gvm/releases/tag/v0.5.3
 [0.5.2]: https://github.com/andrewkroh/gvm/releases/tag/v0.5.2
 [0.5.1]: https://github.com/andrewkroh/gvm/releases/tag/v0.5.1
 [0.5.0]: https://github.com/andrewkroh/gvm/releases/tag/v0.5.0
