@@ -6,8 +6,8 @@ import (
 	"runtime"
 	"runtime/debug"
 
+	"github.com/alecthomas/kingpin/v2"
 	"github.com/sirupsen/logrus"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
 	"github.com/andrewkroh/gvm"
 )

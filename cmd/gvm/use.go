@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
+	"github.com/alecthomas/kingpin/v2"
 
 	"github.com/andrewkroh/gvm"
 	"github.com/andrewkroh/gvm/cmd/gvm/internal/shellfmt"
