@@ -3,6 +3,7 @@ package gvm
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/andrewkroh/gvm/common"
 )
@@ -69,10 +70,7 @@ func (m *Manager) AvailableBinaries() ([]*GoVersion, error) {
 		}
 
 		// Parse the version (remove "go" prefix)
-		versionStr := release.Version
-		if len(versionStr) > 2 && versionStr[:2] == "go" {
-			versionStr = versionStr[2:]
-		}
+		versionStr := strings.TrimPrefix(release.Version, "go")
 
 		ver, err := ParseVersion(versionStr)
 		if err != nil {
