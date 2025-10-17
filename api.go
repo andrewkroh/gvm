@@ -45,7 +45,7 @@ func (m *Manager) fetchGoReleases() ([]GoRelease, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("API request failed with status %d", resp.StatusCode)
+		return nil, fmt.Errorf("API request %s failed: %s", apiURL, resp.Status)
 	}
 
 	var releases []GoRelease
