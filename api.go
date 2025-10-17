@@ -85,12 +85,12 @@ func (r *GoRelease) findArchiveFile(goos, goarch string) *GoFile {
 		}
 
 		// For Windows, ensure we get .zip files
-		if goos == "windows" && !hasExtension(file.Filename, ".zip") {
+		if goos == "windows" && !strings.HasSuffix(file.Filename, ".zip") {
 			continue
 		}
 
 		// For non-Windows, ensure we get .tar.gz files
-		if goos != "windows" && !hasExtension(file.Filename, ".tar.gz") {
+		if goos != "windows" && !strings.HasSuffix(file.Filename, ".tar.gz") {
 			continue
 		}
 
@@ -98,11 +98,6 @@ func (r *GoRelease) findArchiveFile(goos, goarch string) *GoFile {
 	}
 
 	return nil
-}
-
-// hasExtension checks if filename has the given extension
-func hasExtension(filename, ext string) bool {
-	return len(filename) > len(ext) && filename[len(filename)-len(ext):] == ext
 }
 
 // constructDownloadURL constructs the download URL for a given filename
