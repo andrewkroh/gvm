@@ -33,7 +33,7 @@ Linux (amd64):
 
 ``` bash
 # Linux Example (assumes ~/bin is in PATH).
-curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.5.2/gvm-linux-amd64
+curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.6.0/gvm-linux-amd64
 chmod +x ~/bin/gvm
 eval "$(gvm 1.25.3)"
 go version
@@ -43,7 +43,7 @@ Linux (arm64):
 
 ``` bash
 # Linux Example (assumes ~/bin is in PATH).
-curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.5.2/gvm-linux-arm64
+curl -sL -o ~/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.6.0/gvm-linux-arm64
 chmod +x ~/bin/gvm
 eval "$(gvm 1.25.3)"
 go version
@@ -53,7 +53,7 @@ macOS (universal):
 
 ``` bash
 # macOS Example
-curl -sL -o /usr/local/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.5.2/gvm-darwin-all
+curl -sL -o /usr/local/bin/gvm https://github.com/andrewkroh/gvm/releases/download/v0.6.0/gvm-darwin-all
 chmod +x /usr/local/bin/gvm
 eval "$(gvm 1.25.3)"
 go version
@@ -63,7 +63,7 @@ Windows (PowerShell):
 
 ```
 [Net.ServicePointManager]::SecurityProtocol = "tls12"
-Invoke-WebRequest -URI https://github.com/andrewkroh/gvm/releases/download/v0.5.2/gvm-windows-amd64.exe -Outfile C:\Windows\System32\gvm.exe
+Invoke-WebRequest -URI https://github.com/andrewkroh/gvm/releases/download/v0.6.0/gvm-windows-amd64.exe -Outfile C:\Windows\System32\gvm.exe
 gvm --format=powershell 1.25.3 | Invoke-Expression
 go version
 ```
@@ -74,4 +74,4 @@ Use `gvm` with fish shell by executing `gvm 1.25.3 | source` in lieu of using `e
 
 For existing Go users:
 
-`go install github.com/andrewkroh/gvm/cmd/gvm@v0.5.2`
+`go install github.com/andrewkroh/gvm/cmd/gvm@v0.6.0`
