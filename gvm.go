@@ -1,3 +1,6 @@
+// Package gvm provides a Go Version Manager that allows you to install and manage
+// multiple versions of Go. It supports downloading pre-built binaries from the
+// official Go downloads API as well as building from source.
 package gvm
 
 import (
