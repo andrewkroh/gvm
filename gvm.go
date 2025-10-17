@@ -44,8 +44,9 @@ type Manager struct {
 	// GOARCH setting. Defaults to the current architecture.
 	GOARCH string
 
-	// Golang binary store URL. Used to download listing and go binaries.
-	// Defaults to https://storage.googleapis.com/golang
+	// GoStorageHome is deprecated and no longer used.
+	// The new API endpoint https://go.dev/dl/?mode=json&include=all is used instead.
+	// Kept for backward compatibility.
 	GoStorageHome string
 
 	// GoSourceURL configres the update git repository to download and update local
