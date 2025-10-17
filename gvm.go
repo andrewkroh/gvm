@@ -1,3 +1,6 @@
+// Package gvm provides a Go Version Manager that allows you to install and manage
+// multiple versions of Go. It supports downloading pre-built binaries from the
+// official Go downloads API as well as building from source.
 package gvm
 
 import (
@@ -44,8 +47,8 @@ type Manager struct {
 	// GOARCH setting. Defaults to the current architecture.
 	GOARCH string
 
-	// Golang binary store URL. Used to download listing and go binaries.
-	// Defaults to https://storage.googleapis.com/golang
+	// GoStorageHome is the base URL for the Go downloads API.
+	// Defaults to https://go.dev/dl
 	GoStorageHome string
 
 	// GoSourceURL configres the update git repository to download and update local
@@ -73,7 +76,7 @@ func (m *Manager) Init() error {
 	}
 
 	if m.GoStorageHome == "" {
-		m.GoStorageHome = "https://storage.googleapis.com/golang"
+		m.GoStorageHome = "https://go.dev/dl"
 	}
 
 	if m.GoSourceURL == "" {

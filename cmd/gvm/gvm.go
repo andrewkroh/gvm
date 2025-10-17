@@ -14,8 +14,8 @@ import (
 
 const usage = `gvm is a Go version manager. gvm installs a Go version and prints
 the commands to configure your environment to use it. gvm can only install
-binary versions of Go from https://storage.googleapis.com/golang. Below are
-examples for common shells.
+binary versions of Go from https://go.dev/dl. Below are examples for common
+shells.
 
   bash:
     eval "$(gvm 1.24.0)"
