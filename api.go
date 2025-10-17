@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 // GoRelease represents a Go release from the go.dev API
@@ -26,7 +27,12 @@ type GoFile struct {
 
 // fetchGoReleases fetches the list of Go releases from the go.dev API
 func (m *Manager) fetchGoReleases() ([]GoRelease, error) {
-	apiURL := "https://go.dev/dl/?mode=json&include=all"
+	// Ensure the base URL has a trailing slash before adding query parameters
+	baseURL := m.GoStorageHome
+	if !strings.HasSuffix(baseURL, "/") {
+		baseURL += "/"
+	}
+	apiURL := fmt.Sprintf("%s?mode=json&include=all", baseURL)
 
 	client := &http.Client{
 		Timeout: m.HTTPTimeout,
@@ -100,6 +106,10 @@ func hasExtension(filename, ext string) bool {
 }
 
 // constructDownloadURL constructs the download URL for a given filename
-func constructDownloadURL(filename string) string {
-	return fmt.Sprintf("https://go.dev/dl/%s", filename)
+func constructDownloadURL(baseURL, filename string) string {
+	// Ensure proper URL construction with exactly one slash between base and filename
+	if strings.HasSuffix(baseURL, "/") {
+		return fmt.Sprintf("%s%s", baseURL, filename)
+	}
+	return fmt.Sprintf("%s/%s", baseURL, filename)
 }

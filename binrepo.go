@@ -43,7 +43,7 @@ func (m *Manager) installBinary(version *GoVersion) (string, error) {
 	defer os.RemoveAll(tmp)
 
 	// Construct download URL using the filename from the API
-	goURL := constructDownloadURL(file.Filename)
+	goURL := constructDownloadURL(m.GoStorageHome, file.Filename)
 	path, err := common.DownloadFile(goURL, tmp, m.HTTPTimeout, common.DefaultRetryParams)
 	if err != nil {
 		return "", fmt.Errorf("failed downloading from %v: %w", goURL, err)

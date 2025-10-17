@@ -47,9 +47,8 @@ type Manager struct {
 	// GOARCH setting. Defaults to the current architecture.
 	GOARCH string
 
-	// GoStorageHome is deprecated and no longer used.
-	// The new API endpoint https://go.dev/dl/?mode=json&include=all is used instead.
-	// Kept for backward compatibility.
+	// GoStorageHome is the base URL for the Go downloads API.
+	// Defaults to https://go.dev/dl
 	GoStorageHome string
 
 	// GoSourceURL configres the update git repository to download and update local
@@ -77,7 +76,7 @@ func (m *Manager) Init() error {
 	}
 
 	if m.GoStorageHome == "" {
-		m.GoStorageHome = "https://storage.googleapis.com/golang"
+		m.GoStorageHome = "https://go.dev/dl"
 	}
 
 	if m.GoSourceURL == "" {
