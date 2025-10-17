@@ -52,9 +52,11 @@ func (m *Manager) fetchGoReleases() ([]GoRelease, error) {
 
 // findArchiveFile finds the archive file for the given OS/arch combination
 func (r *GoRelease) findArchiveFile(goos, goarch string) *GoFile {
-	// Map special arch cases
 	archToMatch := goarch
-	if goos == "linux" && goarch == "armv6l" {
+
+	// Special case: ARM binary releases are only available for ARMv6
+	// When GOARCH is "arm", we need to look for "armv6l" files
+	if goarch == "arm" {
 		archToMatch = "armv6l"
 	}
 
@@ -72,7 +74,7 @@ func (r *GoRelease) findArchiveFile(goos, goarch string) *GoFile {
 		}
 
 		// Match architecture
-		if !matchesArch(file.Arch, archToMatch) {
+		if file.Arch != archToMatch {
 			continue
 		}
 
@@ -90,25 +92,6 @@ func (r *GoRelease) findArchiveFile(goos, goarch string) *GoFile {
 	}
 
 	return nil
-}
-
-// matchesArch checks if the file arch matches the requested arch
-func matchesArch(fileArch, requestedArch string) bool {
-	if fileArch == requestedArch {
-		return true
-	}
-
-	// Special case: armv6l in filename matches arm architecture
-	if requestedArch == "armv6l" && fileArch == "armv6l" {
-		return true
-	}
-
-	// Special case: arm files may be listed as armv6l in the API
-	if requestedArch == "armv6l" && fileArch == "arm" {
-		return true
-	}
-
-	return false
 }
 
 // hasExtension checks if filename has the given extension
