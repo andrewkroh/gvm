@@ -8,6 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Don't wrap a `nil` error when downloads fail due to a non-200 HTTP status code. [#122](https://github.com/andrewkroh/gvm/pull/122) 
+
 ### Added
 
 ## [0.6.0]
