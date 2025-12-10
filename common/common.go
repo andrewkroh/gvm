@@ -60,7 +60,7 @@ func downloadFile(url, destinationDir string, httpTimeout time.Duration) (path s
 		if resp.StatusCode == http.StatusNotFound {
 			return "", false, ErrNotFound
 		}
-		return "", true, fmt.Errorf("download failed with http status %v: %w", resp.StatusCode, err)
+		return "", true, fmt.Errorf("download failed with http status %v", resp.StatusCode)
 	}
 
 	name := filepath.Join(destinationDir, filepath.Base(url))
