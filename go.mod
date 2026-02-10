@@ -1,6 +1,6 @@
 module github.com/andrewkroh/gvm
 
-go 1.25.0
+go 1.26.0
 
 require (
 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b // indirect
