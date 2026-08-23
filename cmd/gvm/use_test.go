@@ -21,10 +21,24 @@ import (
 var (
 	go1_6  = gvm.MustParseVersion("1.6")
 	go1_9  = gvm.MustParseVersion("1.9")
-	go1_11 = gvm.MustParseVersion("1.11")
 	go1_16 = gvm.MustParseVersion("1.16")
 	go1_21 = gvm.MustParseVersion("1.21")
+	go1_24 = gvm.MustParseVersion("1.24")
 )
+
+// minFromSourceVersion is the oldest Go version that can be built from
+// source in this test environment, keyed by GOOS. Versions older than the
+// floor for the current OS are skipped when FromSource is set.
+var minFromSourceVersion = map[string]*gvm.GoVersion{
+	// Go's linker did not emit the Mach-O LC_UUID load command on darwin
+	// until Go 1.24 (https://github.com/golang/go/issues/68678). Recent
+	// macOS versions refuse to execute binaries missing LC_UUID, which
+	// crashes the self-hosted build of any older version part way through
+	// `go tool dist`. This also covers the older MacOS12BSDThreadRegisterIssue
+	// (https://github.com/golang/go/wiki/MacOS12BSDThreadRegisterIssue),
+	// which affected versions before 1.11.
+	"darwin": go1_24,
+}
 
 func TestGVMRunUse(t *testing.T) {
 	// When testing building from source GOROOT_BOOTSTRAP must be set.
@@ -46,6 +60,9 @@ func TestGVMRunUse(t *testing.T) {
 		{Version: "1.16.14", FromSource: true, Format: "bash", Cmds: []string{"export GOROOT=", "export PATH"}},
 		// Check that older versions which did not use go.mod can be build from source.
 		{Version: "1.10.8", FromSource: true, Format: "bash", Cmds: []string{"export GOROOT=", "export PATH"}},
+		// Check that a version at/above the darwin from-source floor (see
+		// minFromSourceVersion) can be built from source, including on macOS.
+		{Version: "1.24.0", FromSource: true, Format: "bash", Cmds: []string{"export GOROOT=", "export PATH"}},
 		// Check that GO15VENDOREXPERIMENT is added for Go 1.5.
 		// NOTE: 1.5 requires Go 1.4 for bootstrapping if built from source.
 		{Version: "1.5.4", Format: "bash", Cmds: []string{"export GOROOT=", "export PATH", `export GO15VENDOREXPERIMENT="1"`}},
@@ -68,8 +85,10 @@ func TestGVMRunUse(t *testing.T) {
 				t.Skip("Binary distributions of Go 1.5 are not available.")
 			}
 
-			if tc.FromSource && runtime.GOOS == "darwin" && ver.LessThan(go1_11) {
-				t.Skip("Go 1.10 fails on MacOS 12. https://github.com/golang/go/wiki/MacOS12BSDThreadRegisterIssue")
+			if tc.FromSource {
+				if floor, ok := minFromSourceVersion[runtime.GOOS]; ok && ver.LessThan(floor) {
+					t.Skipf("building Go from source is not supported for versions older than %v on %v", floor, runtime.GOOS)
+				}
 			}
 
 			// Go 1.21 and newer will try to download a toolchain to match the version in the go.mod.
