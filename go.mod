@@ -4,7 +4,7 @@ go 1.27.0
 
 require (
 	github.com/alecthomas/kingpin/v2 v2.4.0
-	github.com/hashicorp/go-version v1.7.0
+	github.com/hashicorp/go-version v1.9.0
 	github.com/otiai10/copy v1.14.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
